@@ -522,10 +522,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Room: {fileID: 0}
   QuizForm: {fileID: 1060140173}
-  QuizAnswerButtons: []
+  QuizAnswerButtons:
+  - {fileID: 5527760106474254018}
+  - {fileID: 1295469339}
+  - {fileID: 2076263314}
+  - {fileID: 1437137928}
   QuizImage: {fileID: 775613446}
   QuizTitle: {fileID: 96767473}
-  timeForAnswer: 0
+  QuizTimerText: {fileID: 0}
   LeaderBoardForm: {fileID: 1464289087}
 --- !u!1 &283303073
 GameObject:
@@ -3649,6 +3653,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7330520744778591707, guid: be6e7c26fd3a52944ae172fbd93c0bc5, type: 3}
   m_PrefabInstance: {fileID: 1295469337}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1295469339 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2887555009052257825, guid: be6e7c26fd3a52944ae172fbd93c0bc5, type: 3}
+  m_PrefabInstance: {fileID: 1295469337}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1366987112
 GameObject:
   m_ObjectHideFlags: 0
@@ -3839,6 +3848,11 @@ PrefabInstance:
 --- !u!224 &1437137927 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7330520744778591707, guid: be6e7c26fd3a52944ae172fbd93c0bc5, type: 3}
+  m_PrefabInstance: {fileID: 1437137926}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1437137928 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2887555009052257825, guid: be6e7c26fd3a52944ae172fbd93c0bc5, type: 3}
   m_PrefabInstance: {fileID: 1437137926}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1447009063
@@ -4469,6 +4483,7 @@ MonoBehaviour:
   loginForm: {fileID: 1241771477}
   lobbyForm: {fileID: 946818649}
   roomForm: {fileID: 1366987112}
+  gameForm: {fileID: 252149345}
   room: {fileID: 1366987114}
 --- !u!1 &2031061881
 GameObject:
@@ -4682,6 +4697,11 @@ PrefabInstance:
 --- !u!224 &2076263313 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7330520744778591707, guid: be6e7c26fd3a52944ae172fbd93c0bc5, type: 3}
+  m_PrefabInstance: {fileID: 2076263312}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2076263314 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2887555009052257825, guid: be6e7c26fd3a52944ae172fbd93c0bc5, type: 3}
   m_PrefabInstance: {fileID: 2076263312}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2082245144
@@ -4965,5 +4985,10 @@ PrefabInstance:
 --- !u!224 &5527760106474254017 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7330520744778591707, guid: be6e7c26fd3a52944ae172fbd93c0bc5, type: 3}
+  m_PrefabInstance: {fileID: 5527760106474254016}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5527760106474254018 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2887555009052257825, guid: be6e7c26fd3a52944ae172fbd93c0bc5, type: 3}
   m_PrefabInstance: {fileID: 5527760106474254016}
   m_PrefabAsset: {fileID: 0}
