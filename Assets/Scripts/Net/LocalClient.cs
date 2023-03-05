@@ -7,24 +7,15 @@ using Newtonsoft.Json;
 
 public class LocalClient : ClientSocket
 {
-	private GameObject loginForm;
-	private GameObject lobbyForm;
-	private GameObject roomForm;
-	private Room room;
+	public GameObject loginForm;
+	public GameObject lobbyForm;
+	public GameObject roomForm;
+	public GameObject gameForm;
+	public Room room;
 
 	// Start is called before the first frame update
 	void Start()
 	{
-		loginForm = transform.GetChild(0).gameObject;
-		lobbyForm = transform.GetChild(2).gameObject;
-		roomForm = transform.GetChild(3).gameObject;
-
-		loginForm.GetComponent<LoginForm>().Init();
-		lobbyForm.GetComponent<LobbyForm>().Init();
-		roomForm.GetComponent<Room>().Init();
-
-		room = roomForm.GetComponent<Room>();
-
 		StartClient();
 	}
 

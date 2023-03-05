@@ -5,12 +5,7 @@ using UnityEngine.UI;
 
 public class LobbyForm : MonoBehaviour
 {
-	private InputField inputField;
-
-	public void Init()
-	{
-		inputField = transform.GetChild(0).GetComponent<InputField>();
-	}
+	public InputField inputField;
 
 	public void OnJoinRoom()
 	{

@@ -6,14 +6,8 @@ using UnityEngine.UI;
 
 public class LoginForm : MonoBehaviour
 {
-    private InputField inputField;
-    private GameObject errorText;
-
-    public void Init()
-    {
-        inputField = transform.GetChild(0).GetComponent<InputField>();
-        errorText = transform.GetChild(2).gameObject;
-    }
+    public InputField inputField;
+    public GameObject errorText;
 
     public void OnLogin()
     {

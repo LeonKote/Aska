@@ -6,20 +6,13 @@ using UnityEngine.UI;
 
 public class Room : MonoBehaviour
 {
-	private InputField inputField;
-	private Text chatText;
-	private Text nameText;
-	private Text clientListText;
+	public InputField inputField;
+	public Text chatText;
+	public Text nameText;
+	public Text clientListText;
 
 	private Dictionary<int, Client> clients = new Dictionary<int, Client>();
 
-	public void Init()
-	{
-		inputField = transform.GetChild(0).GetComponent<InputField>();
-		chatText = transform.GetChild(2).GetComponent<Text>();
-		nameText = transform.GetChild(3).GetComponent<Text>();
-		clientListText = transform.GetChild(4).GetComponent<Text>();
-	}
 
 	public void SetRoomCode(int code)
 	{
