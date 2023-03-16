@@ -7,31 +7,30 @@ using Newtonsoft.Json;
 
 public class LocalClient : ClientSocket
 {
-	private GameObject loginForm;
-	private GameObject lobbyForm;
-	private GameObject roomForm;
-	private Room room;
+	[Header("References")]
+	public GameObject LoginForm;
+	public GameObject LobbyForm;
+	public GameObject RoomForm;
+	public GameObject GameForm;
+
+	private LobbyForm lobby;
+	private RoomForm room;
+	private GameForm game;
 
 	// Start is called before the first frame update
 	void Start()
 	{
-		loginForm = transform.GetChild(0).gameObject;
-		lobbyForm = transform.GetChild(2).gameObject;
-		roomForm = transform.GetChild(3).gameObject;
-
-		loginForm.GetComponent<LoginForm>().Init();
-		lobbyForm.GetComponent<LobbyForm>().Init();
-		roomForm.GetComponent<Room>().Init();
-
-		room = roomForm.GetComponent<Room>();
+		lobby = LobbyForm.GetComponent<LobbyForm>();
+		room = RoomForm.GetComponent<RoomForm>();
+		game = GameForm.GetComponent<GameForm>();
 
 		StartClient();
 	}
 
 	// Update is called once per frame
-	protected override void Update()
+	void Update()
 	{
-		base.Update();
+		ProcessResponses();
 	}
 
 	protected override void OnResponse(string message)
@@ -40,27 +39,44 @@ public class LocalClient : ClientSocket
 
 		switch (response.Properties().First().Name)
 		{
-			case "authResult":
-				if ((string)response["authResult"] == "OK")
+			case "auth":
+				if ((bool)response["auth"]["result"] == true)
 				{
-					loginForm.SetActive(false);
-					lobbyForm.SetActive(true);
+					lobby.AddQuizzes(JsonConvert.DeserializeObject<Quiz[]>(response["auth"]["quizzes"].ToString()));
+					LoginForm.SetActive(false);
+					LobbyForm.SetActive(true);
 				}
 				break;
 			case "roomJoin":
-				lobbyForm.SetActive(false);
-				roomForm.SetActive(true);
-				room.SetRoomCode((int)response["roomJoin"]["code"]);
-				room.SetClients(JsonConvert.DeserializeObject<Client[]>(response["roomJoin"]["clients"].ToString()));
+				LobbyForm.SetActive(false);
+				RoomForm.SetActive(true);
+				room.OnLocalClientJoin((int)response["roomJoin"]["code"],
+					JsonConvert.DeserializeObject<Client[]>(response["roomJoin"]["clients"].ToString()));
 				break;
 			case "clientJoin":
-				room.AddClient(JsonConvert.DeserializeObject<Client>(response["clientJoin"].ToString()));
+				room.OnClientJoin(JsonConvert.DeserializeObject<Client>(response["clientJoin"].ToString()));
 				break;
 			case "clientLeave":
-				room.RemoveClient(JsonConvert.DeserializeObject<Client>(response["clientLeave"].ToString()));
+				room.OnClientLeave(JsonConvert.DeserializeObject<Client>(response["clientLeave"].ToString()));
 				break;
-			case "clientMessage":
-				room.ClientMessage((int)response["clientMessage"]["id"], (string)response["clientMessage"]["text"]);
+			case "gameStarted":
+				RoomForm.SetActive(false);
+				GameForm.SetActive(true);
+				break;
+			case "startTimer":
+				game.OnTimerStart();
+				break;
+			case "roundStarted":
+				game.OnRoundStarted(JsonConvert.DeserializeObject<QuizQuestion>(response["roundStarted"].ToString()));
+				break;
+			case "rightAnswer":
+				game.OnRightAnswer((int)response["rightAnswer"]);
+				break;
+			case "roundEnded":
+				game.OnRoundEnded(JsonConvert.DeserializeObject<Dictionary<int, int>>(response["roundEnded"].ToString()));
+				break;
+			case "gameEnded":
+				game.OnGameEnded();
 				break;
 		}
 	}

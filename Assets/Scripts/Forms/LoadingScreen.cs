@@ -13,7 +13,7 @@ public class LoadingScreen : MonoBehaviour
 	}
 
 	public AnimationCurve AnimCurve;
-    public float Duration = 1.5f;
+	public float Duration = 1.5f;
 
 	private Image background;
 	private Image circle;
@@ -27,20 +27,20 @@ public class LoadingScreen : MonoBehaviour
 
 	// Start is called before the first frame update
 	void Start()
-    {
+	{
 		Transform circleTransform = transform.GetChild(0);
 
 		background = transform.GetComponent<Image>();
 		circle = circleTransform.GetChild(0).GetComponent<Image>();
-        edge = circleTransform.GetChild(1);
+		edge = circleTransform.GetChild(1);
 		edgeConst = circleTransform.GetChild(2);
 
 		stage = Stage.Normal;
 	}
 
-    // Update is called once per frame
-    void Update()
-    {
+	// Update is called once per frame
+	void Update()
+	{
 		if (stage == Stage.Normal)
 		{
 			if (timeElapsed < Duration)
