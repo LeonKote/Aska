@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -13,7 +14,8 @@ public class ClientSocket : MonoBehaviour
 	public int MaxAttempts = 3;
 
 	private static TcpClient socket;
-	private Thread thread;
+	private static StreamReader reader;
+	private static StreamWriter writer;
 
 	private List<string> responses = new List<string>();
 
@@ -21,13 +23,12 @@ public class ClientSocket : MonoBehaviour
 
 	protected void StartClient()
 	{
-		thread = new Thread(new ThreadStart(ListenForData));
+		Thread thread = new Thread(new ThreadStart(ListenForData));
 		thread.IsBackground = true;
 		thread.Start();
 	}
 
-	// Update is called once per frame
-	protected virtual void Update()
+	protected void ProcessResponses()
 	{
 		if (responses.Count == 0) return;
 		for (int i = 0; i < responses.Count; i++)
@@ -62,21 +63,22 @@ public class ClientSocket : MonoBehaviour
 
 		Debug.Log("Connected");
 
-		byte[] bytes = new byte[1024];
-		while (true)
+		reader = new StreamReader(socket.GetStream());
+		writer = new StreamWriter(socket.GetStream());
+		writer.AutoFlush = true;
+
+		try
 		{
-			using (NetworkStream stream = socket.GetStream())
+			while (!reader.EndOfStream)
 			{
-				int length;
-				while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
-				{
-					byte[] data = new byte[length];
-					Array.Copy(bytes, 0, data, 0, length);
-					string message = Encoding.UTF8.GetString(data);
-					Debug.Log("Server: " + message);
-					responses.Add(message);
-				}
+				string message = reader.ReadLine();
+				Debug.Log("Server: " + message);
+				responses.Add(message);
 			}
+		}
+		catch (IOException e)
+		{
+			Debug.Log("Socket exception: " + e);
 		}
 	}
 
@@ -89,9 +91,7 @@ public class ClientSocket : MonoBehaviour
 	{
 		try
 		{
-			NetworkStream stream = socket.GetStream();
-			byte[] data = Encoding.UTF8.GetBytes(message + "\n");
-			stream.Write(data, 0, data.Length);
+			writer.WriteLine(message);
 			Debug.Log("Client: " + message);
 		}
 		catch (SocketException e)
