@@ -54,10 +54,10 @@ public class LocalClient : ClientSocket
 					JsonConvert.DeserializeObject<Client[]>(response["roomJoin"]["clients"].ToString()));
 				break;
 			case "clientJoin":
-				room.AddClient(JsonConvert.DeserializeObject<Client>(response["clientJoin"].ToString()));
+				room.OnClientJoin(JsonConvert.DeserializeObject<Client>(response["clientJoin"].ToString()));
 				break;
 			case "clientLeave":
-				room.RemoveClient(JsonConvert.DeserializeObject<Client>(response["clientLeave"].ToString()));
+				room.OnClientLeave(JsonConvert.DeserializeObject<Client>(response["clientLeave"].ToString()));
 				break;
 			case "gameStarted":
 				RoomForm.SetActive(false);

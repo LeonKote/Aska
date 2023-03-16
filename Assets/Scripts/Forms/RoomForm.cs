@@ -26,13 +26,13 @@ public class RoomForm : MonoBehaviour
 		UpdateClientList();
 	}
 
-	public void AddClient(Client client)
+	public void OnClientJoin(Client client)
 	{
 		clients.Add(client.id, client);
 		UpdateClientList();
 	}
 
-	public void RemoveClient(Client client)
+	public void OnClientLeave(Client client)
 	{
 		clients.Remove(client.id);
 		UpdateClientList();
