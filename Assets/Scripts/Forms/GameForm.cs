@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-// TODO: раунды, ху€унды, всю эту движуху сделать, сделать экран с окончанием игры, сделать переходы между раундами и скорбордом, сделать анимацию по€влени€ вопроса
 public class GameForm : MonoBehaviour
 {
 	[Header("References")]
@@ -39,7 +38,6 @@ public class GameForm : MonoBehaviour
 
 	private Dictionary<int, int> scoreboard = new Dictionary<int, int>();
 
-	// Update is called once per frame
 	void Update()
 	{
 		if (countdownForRoundStart)
