@@ -43,13 +43,11 @@ public class LocalClient : ClientSocket
 				if ((bool)response["auth"]["result"] == true)
 				{
 					lobby.AddQuizzes(JsonConvert.DeserializeObject<Quiz[]>(response["auth"]["quizzes"].ToString()));
-					LoginForm.SetActive(false);
-					LobbyForm.SetActive(true);
+					Transition.Instance.StartAnimation(Auth);
 				}
 				break;
 			case "roomJoin":
-				LobbyForm.SetActive(false);
-				RoomForm.SetActive(true);
+				Transition.Instance.StartAnimation(RoomJoin);
 				room.OnLocalClientJoin((int)response["roomJoin"]["code"],
 					JsonConvert.DeserializeObject<Client[]>(response["roomJoin"]["clients"].ToString()));
 				break;
@@ -60,14 +58,14 @@ public class LocalClient : ClientSocket
 				room.OnClientLeave(JsonConvert.DeserializeObject<Client>(response["clientLeave"].ToString()));
 				break;
 			case "gameStarted":
-				RoomForm.SetActive(false);
-				GameForm.SetActive(true);
+				Transition.Instance.StartAnimation(GameStarted);
+				game.OnGameStart();
 				break;
 			case "startTimer":
 				game.OnTimerStart();
 				break;
 			case "roundStarted":
-				game.OnRoundStarted(JsonConvert.DeserializeObject<QuizQuestion>(response["roundStarted"].ToString()));
+				game.CountdownForRoundStart(JsonConvert.DeserializeObject<QuizQuestion>(response["roundStarted"].ToString()));
 				break;
 			case "rightAnswer":
 				game.OnRightAnswer((int)response["rightAnswer"]);
@@ -80,7 +78,21 @@ public class LocalClient : ClientSocket
 				break;
 		}
 	}
-
+	public void Auth()
+	{
+		LoginForm.SetActive(false);
+		LobbyForm.SetActive(true);
+	}
+	public void RoomJoin()
+	{
+		LobbyForm.SetActive(false);
+		RoomForm.SetActive(true);
+	}
+	public void GameStarted()
+	{
+		RoomForm.SetActive(false);
+		GameForm.SetActive(true);
+	}
 	public static void Send(string key, string value)
 	{
 		JObject request = new JObject();
