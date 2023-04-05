@@ -35,6 +35,8 @@ public class GameForm : MonoBehaviour
 	public Color32 rightAnswerColor;
 	public Color32 wrongAnswerColor;
 	public Color32[] defaultButtonColors;
+	public string[] rightAnswerMessages;
+	public string[] wrongAnswerMessages;
 
 	private QuizQuestion roundQuestion;
 	private State state;
@@ -141,11 +143,11 @@ public class GameForm : MonoBehaviour
 		}
 		if (answer == id)
 		{
-			// выдать какое-нибудь сообщение о том что игрок крутой
+			Infobox.instance.ShowInfo(rightAnswerMessages[UnityEngine.Random.Range(0, rightAnswerMessages.Length)], InfoType.green);
 		}
 		else
 		{
-			// выдать какое-нибудь сообщение о том что игрок полный лузер
+			Infobox.instance.ShowInfo(wrongAnswerMessages[UnityEngine.Random.Range(0, wrongAnswerMessages.Length)], InfoType.red);
 		}
 	}
 
