@@ -90,6 +90,7 @@ GameObject:
   m_Component:
   - component: {fileID: 648556955806454653}
   - component: {fileID: 7566196690897462304}
+  - component: {fileID: 2376900077571783059}
   - component: {fileID: 377500016937072034}
   m_Layer: 5
   m_Name: ScoreboardPlayer
@@ -129,6 +130,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 653866276274464634}
   m_CullTransparentMesh: 1
+--- !u!114 &2376900077571783059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653866276274464634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd34af062b8a3904385992b0d26fb1ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0
+  score: 0
+  currentVecPos: {x: 0, y: 0}
+  previousVecPos: {x: 0, y: 0}
 --- !u!114 &377500016937072034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +166,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f142218f6409928458bfc0f0e23d6ea3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a04b1d8ef86f2824689194b2be39695b, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1

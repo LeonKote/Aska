@@ -17,9 +17,9 @@ public class ClientSocket : MonoBehaviour
 	private static StreamReader reader;
 	private static StreamWriter writer;
 
-	private List<string> responses = new List<string>();
+	private Queue<string> responses = new Queue<string>();
 
-	public static TcpClient Socket { get { return socket; } }
+	public static bool IsConnected { get { return socket != null && socket.Connected; } }
 
 	protected void StartClient()
 	{
@@ -31,9 +31,10 @@ public class ClientSocket : MonoBehaviour
 	protected void ProcessResponses()
 	{
 		if (responses.Count == 0) return;
-		for (int i = 0; i < responses.Count; i++)
-			OnResponse(responses[i]);
-		responses.Clear();
+
+		lock (responses)
+			while (responses.Count > 0)
+				OnResponse(responses.Dequeue());
 	}
 
 	private void ListenForData()
@@ -61,11 +62,13 @@ public class ClientSocket : MonoBehaviour
 		}
 		while (attempts > 0);
 
+		AddMessage("{\"socket\":true}");
 		Debug.Log("Connected");
 
-		reader = new StreamReader(socket.GetStream());
-		writer = new StreamWriter(socket.GetStream());
+		reader = new StreamReader(socket.GetStream(), Encoding.UTF8);
+		writer = new StreamWriter(socket.GetStream(), Encoding.UTF8);
 		writer.AutoFlush = true;
+		writer.WriteLine();
 
 		try
 		{
@@ -73,13 +76,19 @@ public class ClientSocket : MonoBehaviour
 			{
 				string message = reader.ReadLine();
 				Debug.Log("Server: " + message);
-				responses.Add(message);
+				AddMessage(message);
 			}
 		}
 		catch (IOException e)
 		{
 			Debug.Log("Socket exception: " + e);
 		}
+	}
+
+	private void AddMessage(string message)
+	{
+		lock (responses)
+			responses.Enqueue(message);
 	}
 
 	protected virtual void OnResponse(string message)

@@ -4,4 +4,5 @@ public class QuizQuestion
 	public string[] answers;
 	public string image;
 	public int time;
+	public int countdown;
 }

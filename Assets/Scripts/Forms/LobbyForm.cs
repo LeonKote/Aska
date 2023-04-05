@@ -24,6 +24,6 @@ public class LobbyForm : MonoBehaviour
 	public void AddQuizzes(Quiz[] quizzes)
 	{
 		this.quizzes = quizzes;
-		Dropdown.AddOptions(quizzes.Select(x => x.name.Substring(0, 15)).ToList());
+		Dropdown.AddOptions(quizzes.Select(x => x.name.Substring(0, Mathf.Min(x.name.Length, 25))).ToList());
 	}
 }
