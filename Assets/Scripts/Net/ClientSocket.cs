@@ -19,7 +19,7 @@ public class ClientSocket : MonoBehaviour
 
 	private List<string> responses = new List<string>();
 
-	public static TcpClient Socket { get { return socket; } }
+	public static bool IsConnected { get { return socket != null && socket.Connected; } }
 
 	protected void StartClient()
 	{
@@ -61,6 +61,7 @@ public class ClientSocket : MonoBehaviour
 		}
 		while (attempts > 0);
 
+		responses.Add("{\"socket\":true}");
 		Debug.Log("Connected");
 
 		reader = new StreamReader(socket.GetStream());

@@ -3,15 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class GameForm : MonoBehaviour
 {
+	private enum State
+	{
+		None,
+		Countdown,
+		InGame
+	}
+
 	[Header("References")]
-	public GameObject QuizForm;
 	public GameObject QuizThemeForm;
 	public GameObject QuizQuestionForm;
+	public GameObject QuizForm;
 	public GameObject ScoreboardForm;
-	public GameObject ScoreboardPlayerPrefab;
-	public RoomForm Room;
 
 	[Header("Quiz Theme Form")]
 	public Text QuizThemeText;
@@ -20,49 +26,50 @@ public class GameForm : MonoBehaviour
 	public Text CountdownText;
 	public Text QuestionText;
 
-	[Header("Quiz form")]
+	[Header("Quiz Form")]
 	public Text QuizTitle;
 	public GameObject[] QuizAnswerButtons; // подразумевается 4 варианта ответа, в будущем можно сделать более гибко
 	public RawImage QuizImage;
 	public Text QuizTimerText;
 
-	private QuizQuestion roundQuestion;
-	private bool roundStarted;
-	private float timeForAnswer;
-	private float timeForRoundStart;
-	private bool countdownForRoundStart;
-	private int answer;
 	public Color32 rightAnswerColor;
 	public Color32 wrongAnswerColor;
 	public Color32[] defaultButtonColors;
 
-	private Dictionary<int, int> scoreboard = new Dictionary<int, int>();
+	private QuizQuestion roundQuestion;
+	private State state;
+	private float timerTime;
+	private int answer;
+
+	private ScoreboardForm scoreboard;
+
+	void Start()
+	{
+		scoreboard = ScoreboardForm.GetComponent<ScoreboardForm>();
+	}
 
 	void Update()
 	{
-		if (countdownForRoundStart)
+		switch (state)
 		{
-			timeForRoundStart -= Time.deltaTime;
-			SetCountdownText();
-			if (timeForRoundStart <= 0)
-			{
-				OnRoundStarted();
-				countdownForRoundStart = false;
-			}
-
-		}
-		if (!roundStarted)
-			return;
-
-		if (timeForAnswer > 0)
-		{
-			timeForAnswer -= Time.deltaTime;
-			SetTimerText();
-		}
-		else
-		{
-			SetAnswerButtonsInteractable(false);
-			roundStarted = false;
+			case State.Countdown:
+				timerTime -= Time.deltaTime;
+				SetCountdownText();
+				if (timerTime <= 0)
+				{
+					OnRoundStarted();
+					state = State.InGame;
+				}
+				break;
+			case State.InGame:
+				timerTime -= Time.deltaTime;
+				SetTimerText();
+				if (timerTime <= 0)
+				{
+					SetAnswerButtonsInteractable(false);
+					state = State.None;
+				}
+				break;
 		}
 	}
 
@@ -71,54 +78,56 @@ public class GameForm : MonoBehaviour
 
 	}
 
-	public void OnGameStart()
+	public void OnGameStart(string name)
 	{
-		// QuizTheme.text = ...
+		QuizThemeText.text = name;
 		QuizThemeForm.SetActive(true);
 	}
 
 	public void CountdownForRoundStart(QuizQuestion question)
 	{
 		roundQuestion = question;
-		QuestionText.text = roundQuestion.question;
-		timeForRoundStart = 3;
-		QuizThemeForm.SetActive(false);
-		ScoreboardForm.SetActive(false);
-		QuizQuestionForm.SetActive(true);
-		countdownForRoundStart = true;
-	}
+		QuestionText.text = question.question;
+		timerTime = question.countdown;
 
-	public void SetCountdownText()
-	{
-		CountdownText.text = Math.Round(timeForRoundStart).ToString();
-	}
-
-	public void OnRoundStarted()
-	{
-		roundStarted = true;
-		SetAnswerButtonsInteractable(true);
-		ScoreboardForm.SetActive(false);
-		QuizQuestionForm.SetActive(false);
-		QuizForm.SetActive(true);
-
-		QuizTitle.text = roundQuestion.question;
+		QuizTitle.text = question.question;
 
 		for (int i = 0; i < QuizAnswerButtons.Length; i++)
 		{
-			QuizAnswerButtons[i].transform.GetChild(0).GetComponent<Text>().text = roundQuestion.answers[i];
+			QuizAnswerButtons[i].transform.GetChild(0).GetComponent<Text>().text = question.answers[i];
 			QuizAnswerButtons[i].transform.GetComponent<Image>().color = defaultButtonColors[i];
 		}
 
 		Texture2D tex = new Texture2D(2, 2);
-		tex.LoadImage(Convert.FromBase64String(roundQuestion.image));
+		tex.LoadImage(Convert.FromBase64String(question.image));
 		QuizImage.texture = tex;
 
-		timeForAnswer = roundQuestion.time;
+		QuizThemeForm.SetActive(false);
+		ScoreboardForm.SetActive(false);
+		QuizQuestionForm.SetActive(true);
+
+		state = State.Countdown;
+	}
+
+	public void SetCountdownText()
+	{
+		CountdownText.text = Mathf.Round(timerTime).ToString();
+	}
+
+	public void OnRoundStarted()
+	{
+		timerTime = roundQuestion.time;
+		SetAnswerButtonsInteractable(true);
+
+		QuizQuestionForm.SetActive(false);
+		QuizForm.SetActive(true);
+
+		state = State.InGame;
 	}
 
 	public void OnRightAnswer(int id)
 	{
-		roundStarted = false;
+		state = State.None;
 		SetAnswerButtonsInteractable(false);
 
 		if (answer == -1)
@@ -140,31 +149,23 @@ public class GameForm : MonoBehaviour
 		}
 	}
 
-	public void OnRoundEnded(Dictionary<int, int> scoreboard)
+	public void OnRoundEnded(Dictionary<int, int> score)
 	{
 		answer = -1;
 		QuizForm.SetActive(false);
 		ScoreboardForm.SetActive(true);
 
-		ClearScoreboard();
-		this.scoreboard = scoreboard;
-
-		foreach (int id in scoreboard.Keys)
-		{
-			GameObject scoreboardPlayer = Instantiate(ScoreboardPlayerPrefab, ScoreboardForm.transform.GetChild(1));
-			scoreboardPlayer.transform.GetChild(0).GetComponent<Text>().text = Room.Clients[id].name;
-			scoreboardPlayer.transform.GetChild(2).GetComponent<Text>().text = scoreboard[id].ToString();
-		}
+		scoreboard.UpdateScore(score);
 	}
 
 	public void OnGameEnded()
 	{
-		
+
 	}
 
 	public void SetTimerText()
 	{
-		QuizTimerText.text = Math.Round(timeForAnswer).ToString();
+		QuizTimerText.text = Mathf.Round(timerTime).ToString();
 	}
 
 	public void OnAnswerButtonPressed(int answerIndex)
@@ -179,11 +180,5 @@ public class GameForm : MonoBehaviour
 	{
 		foreach (GameObject quizAnswerButton in QuizAnswerButtons)
 			quizAnswerButton.GetComponent<Button>().interactable = enable;
-	}
-
-	public void ClearScoreboard()
-	{
-		foreach (Transform scoreboardPlayer in ScoreboardForm.transform.GetChild(1))
-			Destroy(scoreboardPlayer.gameObject);
 	}
 }

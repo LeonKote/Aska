@@ -13,6 +13,7 @@ public class LocalClient : ClientSocket
 	public GameObject RoomForm;
 	public GameObject GameForm;
 
+	private LoginForm login;
 	private LobbyForm lobby;
 	private RoomForm room;
 	private GameForm game;
@@ -20,6 +21,7 @@ public class LocalClient : ClientSocket
 	// Start is called before the first frame update
 	void Start()
 	{
+		login = LoginForm.GetComponent<LoginForm>();
 		lobby = LobbyForm.GetComponent<LobbyForm>();
 		room = RoomForm.GetComponent<RoomForm>();
 		game = GameForm.GetComponent<GameForm>();
@@ -39,17 +41,28 @@ public class LocalClient : ClientSocket
 
 		switch (response.Properties().First().Name)
 		{
+			case "socket":
+				login.OnLocalClientConnected();
+				break;
 			case "auth":
 				if ((bool)response["auth"]["result"] == true)
 				{
 					lobby.AddQuizzes(JsonConvert.DeserializeObject<Quiz[]>(response["auth"]["quizzes"].ToString()));
-					Transition.Instance.StartAnimation(Auth);
+					Transition.Instance.StartAnimation(() =>
+					{
+						LoginForm.SetActive(false);
+						LobbyForm.SetActive(true);
+					});
 				}
 				break;
 			case "roomJoin":
-				Transition.Instance.StartAnimation(RoomJoin);
 				room.OnLocalClientJoin((int)response["roomJoin"]["code"],
 					JsonConvert.DeserializeObject<Client[]>(response["roomJoin"]["clients"].ToString()));
+				Transition.Instance.StartAnimation(() =>
+				{
+					LobbyForm.SetActive(false);
+					RoomForm.SetActive(true);
+				});
 				break;
 			case "clientJoin":
 				room.OnClientJoin(JsonConvert.DeserializeObject<Client>(response["clientJoin"].ToString()));
@@ -58,8 +71,12 @@ public class LocalClient : ClientSocket
 				room.OnClientLeave(JsonConvert.DeserializeObject<Client>(response["clientLeave"].ToString()));
 				break;
 			case "gameStarted":
-				Transition.Instance.StartAnimation(GameStarted);
-				game.OnGameStart();
+				game.OnGameStart((string)response["gameStarted"]["name"]);
+				Transition.Instance.StartAnimation(() =>
+				{
+					RoomForm.SetActive(false);
+					GameForm.SetActive(true);
+				});
 				break;
 			case "startTimer":
 				game.OnTimerStart();
@@ -78,21 +95,7 @@ public class LocalClient : ClientSocket
 				break;
 		}
 	}
-	public void Auth()
-	{
-		LoginForm.SetActive(false);
-		LobbyForm.SetActive(true);
-	}
-	public void RoomJoin()
-	{
-		LobbyForm.SetActive(false);
-		RoomForm.SetActive(true);
-	}
-	public void GameStarted()
-	{
-		RoomForm.SetActive(false);
-		GameForm.SetActive(true);
-	}
+
 	public static void Send(string key, string value)
 	{
 		JObject request = new JObject();

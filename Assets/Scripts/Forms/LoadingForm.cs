@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LoadingScreen : MonoBehaviour
+public class LoadingForm : MonoBehaviour
 {
 	private enum Stage
 	{
 		Normal,
-		End,
 		Dispose
 	}
 
 	public AnimationCurve AnimCurve;
-	public float Duration = 1.5f;
+	public float Duration = 2f;
+	public Transform LoadingCircle;
+	public InputField InputField;
 
-	private Image background;
 	private Image circle;
 	private Transform edge;
 	private Transform edgeConst;
@@ -28,12 +28,9 @@ public class LoadingScreen : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-		Transform circleTransform = transform.GetChild(0);
-
-		background = transform.GetComponent<Image>();
-		circle = circleTransform.GetChild(0).GetComponent<Image>();
-		edge = circleTransform.GetChild(1);
-		edgeConst = circleTransform.GetChild(2);
+		circle = LoadingCircle.GetChild(0).GetComponent<Image>();
+		edge = LoadingCircle.GetChild(1);
+		edgeConst = LoadingCircle.GetChild(2);
 
 		stage = Stage.Normal;
 	}
@@ -54,6 +51,7 @@ public class LoadingScreen : MonoBehaviour
 				else
 					circle.fillAmount = 1 - t;
 
+				LoadingCircle.localEulerAngles = new Vector3(0, 0, t * -360);
 				edge.localEulerAngles = new Vector3(0, 0, t * -360);
 			}
 			else
@@ -62,16 +60,16 @@ public class LoadingScreen : MonoBehaviour
 				circle.fillClockwise = forward;
 				timeElapsed = 0;
 
-				if (LocalClient.Socket != null && LocalClient.Socket.Connected && forward)
+				if (LocalClient.IsConnected && forward)
 				{
-					stage = Stage.End;
+					stage = Stage.Dispose;
 					edgeConst.gameObject.SetActive(false);
-					edge.localPosition = new Vector3(0, -224, 0);
+					edge.localPosition = new Vector3(0, -24, 0);
 					edge.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
 				}
 			}
 		}
-		else if (stage == Stage.End)
+		else if (stage == Stage.Dispose)
 		{
 			if (timeElapsed < Duration)
 			{
@@ -83,23 +81,8 @@ public class LoadingScreen : MonoBehaviour
 			}
 			else
 			{
-				timeElapsed = 0;
-				stage = Stage.Dispose;
-			}
-		}
-		else if (stage == Stage.Dispose)
-		{
-			if (timeElapsed < Duration)
-			{
-				float t = 1 - AnimCurve.Evaluate(timeElapsed / Duration);
-
-				timeElapsed += Time.deltaTime;
-
-				background.color = new Color(1, 1, 1, t);
-			}
-			else
-			{
-				Destroy(gameObject);
+				Destroy(LoadingCircle.gameObject);
+				enabled = false;
 			}
 		}
 	}

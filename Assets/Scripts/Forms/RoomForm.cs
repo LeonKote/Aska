@@ -12,16 +12,13 @@ public class RoomForm : MonoBehaviour
 
 	private Dictionary<int, Client> clients = new Dictionary<int, Client>();
 
-	public Dictionary<int, Client> Clients
-	{
-		get { return clients; }
-	}
+	public Dictionary<int, Client> Clients { get { return clients; } }
 
 	public void OnLocalClientJoin(int code, Client[] clients)
 	{
 		if (clients.Length == 1)
 			StartButton.SetActive(true);
-		NameText.text = "Room #" + code;
+		NameText.text = "Комната #" + code;
 		this.clients = clients.ToDictionary(x => x.id, x => x);
 		UpdateClientList();
 	}

@@ -20,4 +20,9 @@ public class LoginForm : MonoBehaviour
 
 		LocalClient.Send("auth", InputField.text);
 	}
+
+	public void OnLocalClientConnected()
+	{
+		InputField.interactable = true;
+	}
 }
