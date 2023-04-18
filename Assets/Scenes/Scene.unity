@@ -132,8 +132,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 41827194}
-  - component: {fileID: 41827195}
-  - component: {fileID: 41827196}
   m_Layer: 5
   m_Name: Menu Form
   m_TagString: Untagged
@@ -163,38 +161,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!95 &41827195
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 41827193}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 243595d3fbab9eb4481764fd35ce64a1, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
---- !u!225 &41827196
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 41827193}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &96767471
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,8 +986,8 @@ MonoBehaviour:
   QuizQuestionForm: {fileID: 340868604}
   QuizForm: {fileID: 1060140173}
   ScoreboardForm: {fileID: 1464289087}
-  LobbyForm: {fileID: 0}
-  LobbyFormScript: {fileID: 0}
+  LobbyForm: {fileID: 946818649}
+  LobbyFormScript: {fileID: 946818651}
   QuizThemeText: {fileID: 642089694}
   quizQuestionFormAnimator: {fileID: 340868606}
   CountdownText: {fileID: 1479462702}
@@ -4365,6 +4331,7 @@ MonoBehaviour:
   enterLobbyForm: {fileID: 1234868616}
   createLobbyForm: {fileID: 634989953}
   quizEditorForm: {fileID: 0}
+  activeForm: {fileID: 0}
 --- !u!1001 &977543431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5641,8 +5608,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1191159693}
   - component: {fileID: 1191159694}
-  - component: {fileID: 1191159696}
-  - component: {fileID: 1191159695}
   m_Layer: 5
   m_Name: Settings Form
   m_TagString: Untagged
@@ -5687,38 +5652,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   listener: {fileID: 519420029}
   soundToggle: {fileID: 840581757}
---- !u!225 &1191159695
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1191159692}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!95 &1191159696
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1191159692}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 243595d3fbab9eb4481764fd35ce64a1, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &1197070958
 GameObject:
   m_ObjectHideFlags: 0
@@ -5885,8 +5818,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1234868620}
   - component: {fileID: 1234868619}
-  - component: {fileID: 1234868618}
-  - component: {fileID: 1234868617}
   m_Layer: 5
   m_Name: Enter Lobby Form
   m_TagString: Untagged
@@ -5894,38 +5825,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!225 &1234868617
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234868616}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!95 &1234868618
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234868616}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 243595d3fbab9eb4481764fd35ce64a1, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
 --- !u!222 &1234868619
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6135,7 +6034,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1241771478
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6580,8 +6479,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1366987113}
   - component: {fileID: 1366987114}
-  - component: {fileID: 1366987116}
-  - component: {fileID: 1366987115}
   m_Layer: 5
   m_Name: RoomForm
   m_TagString: Untagged
@@ -6627,38 +6524,6 @@ MonoBehaviour:
   NameText: {fileID: 2118534516}
   ClientListText: {fileID: 239226032}
   StartButton: {fileID: 410712539}
---- !u!225 &1366987115
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1366987112}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!95 &1366987116
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1366987112}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 243595d3fbab9eb4481764fd35ce64a1, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &1389243418
 GameObject:
   m_ObjectHideFlags: 0
@@ -6856,7 +6721,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -74.999985}
+  m_AnchoredPosition: {x: 75, y: -75}
   m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1420085887
@@ -9140,7 +9005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10b77145a9ccdf542b61dccacccd8216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hostname: 95.82.231.190
+  Hostname: localhost
   Port: 8887
   MaxAttempts: 3
   LoginForm: {fileID: 1241771477}
