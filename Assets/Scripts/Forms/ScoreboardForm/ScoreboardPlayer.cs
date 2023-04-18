@@ -42,6 +42,7 @@ public class ScoreboardPlayer : MonoBehaviour
 		}
 		else
 		{
+			scoreText.text = score.ToString();
 			timeElapsed = 0;
 			isChanging = false;
 		}

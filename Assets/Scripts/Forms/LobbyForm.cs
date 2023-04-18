@@ -9,7 +9,54 @@ public class LobbyForm : MonoBehaviour
 	public InputField InputField;
 	public Dropdown Dropdown;
 	private Quiz[] quizzes;
+	public GameObject menuForm;
+	public GameObject settingsForm;
+	public GameObject enterLobbyForm;
+	public GameObject createLobbyForm;
+	public GameObject quizEditorForm;
 
+	public GameObject activeForm;
+
+	public void Start()
+	{
+		activeForm = menuForm;
+	}
+	public void OnBackButtonPressed()
+	{
+		Transition.Instance.StartAnimation(() =>
+		{
+			activeForm.SetActive(false);
+			menuForm.SetActive(true);
+			activeForm = menuForm;
+		});
+	}
+	public void OnSettingsButtonPressed()
+	{
+		Transition.Instance.StartAnimation(() =>
+		{
+			menuForm.SetActive(false);
+			settingsForm.SetActive(true);
+			activeForm = settingsForm;
+		});
+	}
+	public void OnEnterLobbyButtonPressed()
+	{
+		Transition.Instance.StartAnimation(() =>
+		{
+			menuForm.SetActive(false);
+			enterLobbyForm.SetActive(true);
+			activeForm = enterLobbyForm;
+		});
+	}
+	public void OnCreateLobbyButtonPressed()
+	{
+		Transition.Instance.StartAnimation(() =>
+		{
+			menuForm.SetActive(false);
+			createLobbyForm.SetActive(true);
+			activeForm = createLobbyForm;
+		});
+	}
 	public void OnJoinRoom()
 	{
 		LocalClient.Send("join", int.Parse(InputField.text));
