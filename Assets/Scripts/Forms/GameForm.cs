@@ -18,11 +18,14 @@ public class GameForm : MonoBehaviour
 	public GameObject QuizQuestionForm;
 	public GameObject QuizForm;
 	public GameObject ScoreboardForm;
+	public GameObject LobbyForm;
+	public LobbyForm LobbyFormScript;
 
 	[Header("Quiz Theme Form")]
 	public Text QuizThemeText;
 
 	[Header("Quiz Question Form")]
+	public Animator quizQuestionFormAnimator;
 	public Text CountdownText;
 	public Text QuestionText;
 
@@ -57,6 +60,8 @@ public class GameForm : MonoBehaviour
 			case State.Countdown:
 				timerTime -= Time.deltaTime;
 				SetCountdownText();
+				if (timerTime <= 0.5f)
+					quizQuestionFormAnimator.Play("QuizQuestionDisappearing");
 				if (timerTime <= 0)
 				{
 					OnRoundStarted();
@@ -84,6 +89,8 @@ public class GameForm : MonoBehaviour
 	{
 		QuizThemeText.text = name;
 		QuizThemeForm.SetActive(true);
+		ScoreboardForm.SetActive(false);
+		QuizQuestionForm.SetActive(false);
 	}
 
 	public void CountdownForRoundStart(QuizQuestion question)
@@ -121,7 +128,6 @@ public class GameForm : MonoBehaviour
 		timerTime = roundQuestion.time;
 		SetAnswerButtonsInteractable(true);
 
-		QuizQuestionForm.SetActive(false);
 		QuizForm.SetActive(true);
 
 		state = State.InGame;
@@ -158,6 +164,19 @@ public class GameForm : MonoBehaviour
 		ScoreboardForm.SetActive(true);
 
 		scoreboard.UpdateScore(score);
+	}
+
+	public void OnBackButtonPressed()
+	{
+		Transition.Instance.StartAnimation(() =>
+		{
+			gameObject.SetActive(false);
+			LobbyForm.SetActive(true);
+			LobbyFormScript.enterLobbyForm.SetActive(false);
+			LobbyFormScript.createLobbyForm.SetActive(false);
+			LobbyFormScript.menuForm.SetActive(true);
+			LobbyFormScript.activeForm = LobbyFormScript.menuForm;
+		});
 	}
 
 	public void OnGameEnded()
