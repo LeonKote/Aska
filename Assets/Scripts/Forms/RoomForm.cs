@@ -42,6 +42,6 @@ public class RoomForm : MonoBehaviour
 
 	public void OnLocalClientStart()
 	{
-		LocalClient.Send("start", null); // старт
+		LocalClient.Send("start", null);
 	}
 }
