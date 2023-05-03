@@ -48,6 +48,17 @@ public class LobbyForm : MonoBehaviour
 			activeForm = enterLobbyForm;
 		});
 	}
+
+	public void OnQuizEditorButtonPressed()
+	{
+		Transition.Instance.StartAnimation(() =>
+		{
+			menuForm.SetActive(false);
+			quizEditorForm.SetActive(true);
+			activeForm = quizEditorForm;
+		});
+	}
+
 	public void OnCreateLobbyButtonPressed()
 	{
 		Transition.Instance.StartAnimation(() =>
