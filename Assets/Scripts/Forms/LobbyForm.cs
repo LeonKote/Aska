@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,10 @@ public class LobbyForm : MonoBehaviour
 	public GameObject enterLobbyForm;
 	public GameObject createLobbyForm;
 	public GameObject quizEditorForm;
+
+	public Text nicknameText;
+	public RawImage avatarImage;
+	public Sprite blankAvatarSprite;
 
 	public GameObject activeForm;
 
@@ -71,6 +76,19 @@ public class LobbyForm : MonoBehaviour
 	public void OnJoinRoom()
 	{
 		LocalClient.Send("join", int.Parse(InputField.text));
+	}
+
+	public void UpdateProfileUI(string nickname, string avatar = null)
+	{
+		nicknameText.text = nickname;
+		Texture2D tex = new Texture2D(2, 2);
+		if (avatar != null)
+		{
+			tex.LoadImage(Convert.FromBase64String(avatar));
+			avatarImage.texture = tex;
+		}
+		else
+			avatarImage.texture = blankAvatarSprite.texture;
 	}
 
 	public void OnCreateRoom()

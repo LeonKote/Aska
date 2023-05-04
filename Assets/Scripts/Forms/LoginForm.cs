@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class LoginForm : MonoBehaviour
 {
 	public InputField InputField;
+	public LobbyForm LobbyForm;
 
 	public void OnLogin()
 	{
@@ -16,7 +17,7 @@ public class LoginForm : MonoBehaviour
 			InputField.text = "";
 			return;
 		}
-
+		LobbyForm.UpdateProfileUI(InputField.text);
 		LocalClient.Send("auth", InputField.text);
 	}
 
