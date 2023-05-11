@@ -9,7 +9,7 @@ public class LobbyForm : MonoBehaviour
 {
 	public InputField InputField;
 	public Dropdown Dropdown;
-	private Quiz[] quizzes;
+	public Quiz[] Quizzes;
 	public GameObject menuForm;
 	public GameObject settingsForm;
 	public GameObject enterLobbyForm;
@@ -107,12 +107,12 @@ public class LobbyForm : MonoBehaviour
 	public void OnCreateRoom()
 	{
 		if (Dropdown.value == 0) return;
-		LocalClient.Send("create", quizzes[Dropdown.value - 1].id);
+		LocalClient.Send("create", Quizzes[Dropdown.value - 1].id);
 	}
 
 	public void AddQuizzes(Quiz[] quizzes)
 	{
-		this.quizzes = quizzes;
+		this.Quizzes = quizzes;
 		Dropdown.AddOptions(quizzes.Select(x => x.name.Substring(0, Mathf.Min(x.name.Length, 25))).ToList());
 	}
 }
