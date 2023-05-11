@@ -104,15 +104,8 @@ public class LobbyForm : MonoBehaviour
 			avatarImage.texture = blankAvatarSprite.texture;
 	}
 
-	public void OnCreateRoom()
-	{
-		if (Dropdown.value == 0) return;
-		LocalClient.Send("create", Quizzes[Dropdown.value - 1].id);
-	}
-
 	public void AddQuizzes(Quiz[] quizzes)
 	{
 		this.Quizzes = quizzes;
-		Dropdown.AddOptions(quizzes.Select(x => x.name.Substring(0, Mathf.Min(x.name.Length, 25))).ToList());
 	}
 }
