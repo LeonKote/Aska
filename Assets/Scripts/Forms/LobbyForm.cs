@@ -15,6 +15,7 @@ public class LobbyForm : MonoBehaviour
 	public GameObject enterLobbyForm;
 	public GameObject createLobbyForm;
 	public GameObject quizEditorForm;
+	public GameObject profileEditorForm;
 
 	public Text nicknameText;
 	public RawImage avatarImage;
@@ -26,6 +27,7 @@ public class LobbyForm : MonoBehaviour
 	{
 		activeForm = menuForm;
 	}
+
 	public void OnBackButtonPressed()
 	{
 		Transition.Instance.StartAnimation(() =>
@@ -73,6 +75,17 @@ public class LobbyForm : MonoBehaviour
 			activeForm = createLobbyForm;
 		});
 	}
+
+	public void OnProfileEditorButtonPressed()
+	{
+		Transition.Instance.StartAnimation(() =>
+		{
+			menuForm.SetActive(false);
+			profileEditorForm.SetActive(true);
+			activeForm = profileEditorForm;
+		});
+	}
+
 	public void OnJoinRoom()
 	{
 		LocalClient.Send("join", int.Parse(InputField.text));
@@ -81,9 +94,9 @@ public class LobbyForm : MonoBehaviour
 	public void UpdateProfileUI(string nickname, string avatar = null)
 	{
 		nicknameText.text = nickname;
-		Texture2D tex = new Texture2D(2, 2);
 		if (avatar != null)
 		{
+			Texture2D tex = new Texture2D(2, 2);
 			tex.LoadImage(Convert.FromBase64String(avatar));
 			avatarImage.texture = tex;
 		}

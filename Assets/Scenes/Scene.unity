@@ -454,7 +454,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &41827194
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9241,9 +9241,9 @@ RectTransform:
   m_Father: {fileID: 1425077687}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 435, y: -250}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 300, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &873435043
@@ -9824,9 +9824,9 @@ RectTransform:
   m_Father: {fileID: 1425077687}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1485, y: -250}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 300, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &938428465
@@ -10145,9 +10145,10 @@ MonoBehaviour:
   enterLobbyForm: {fileID: 1234868616}
   createLobbyForm: {fileID: 634989953}
   quizEditorForm: {fileID: 1199552815}
+  profileEditorForm: {fileID: 1304814372}
   nicknameText: {fileID: 1724588417}
-  avatarImage: {fileID: 0}
-  blankAvatarSprite: {fileID: 0}
+  avatarImage: {fileID: 1353219607}
+  blankAvatarSprite: {fileID: 21300000, guid: f4e7e764b72acd248b57f3a559c0a237, type: 3}
   activeForm: {fileID: 0}
 --- !u!1001 &977543431
 PrefabInstance:
@@ -11722,9 +11723,9 @@ RectTransform:
   m_Father: {fileID: 1425077687}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1135, y: -250}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 300, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1159189145
@@ -13661,7 +13662,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1304814373
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13698,10 +13699,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ceb2ad63f2d4e654ab58535046d4567b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lobbyForm: {fileID: 946818651}
   avatarText: 
   nickname: 
-  avatarImage: {fileID: 0}
-  nicknameInputField: {fileID: 0}
+  avatarImage: {fileID: 1489644981}
+  blankSprite: {fileID: 21300000, guid: 450fabef0a18c874b97c4018dcc51e9f, type: 3}
+  nicknameInputField: {fileID: 1579376591}
 --- !u!1 &1318207016
 GameObject:
   m_ObjectHideFlags: 0
@@ -14001,7 +14004,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1353219604}
   - component: {fileID: 1353219606}
-  - component: {fileID: 1353219605}
+  - component: {fileID: 1353219607}
   m_Layer: 5
   m_Name: Avatar
   m_TagString: Untagged
@@ -14029,7 +14032,15 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1353219605
+--- !u!222 &1353219606
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1353219603}
+  m_CullTransparentMesh: 1
+--- !u!114 &1353219607
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14038,7 +14049,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1353219603}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -14049,24 +14060,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f4e7e764b72acd248b57f3a559c0a237, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1353219606
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1353219603}
-  m_CullTransparentMesh: 1
+  m_Texture: {fileID: 2800000, guid: f4e7e764b72acd248b57f3a559c0a237, type: 3}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!1 &1357303113
 GameObject:
   m_ObjectHideFlags: 0
@@ -14528,7 +14528,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1385808165}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 946818651}
+        m_TargetAssemblyTypeName: LobbyForm, Assembly-CSharp
+        m_MethodName: OnProfileEditorButtonPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1304814374}
+        m_TargetAssemblyTypeName: ProfileEditorForm, Assembly-CSharp
+        m_MethodName: OnFormOpened
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1385808165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16317,10 +16341,22 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 1489644981}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1304814374}
+        m_TargetAssemblyTypeName: ProfileEditorForm, Assembly-CSharp
+        m_MethodName: UploadAvatar
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1489644981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16593,13 +16629,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1579376592}
   m_TextComponent: {fileID: 28581129}
   m_Placeholder: {fileID: 473080341}
-  m_ContentType: 2
+  m_ContentType: 0
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 0
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 1
+  m_CharacterValidation: 0
   m_CharacterLimit: 6
   m_OnSubmit:
     m_PersistentCalls:
@@ -19189,9 +19225,9 @@ RectTransform:
   m_Father: {fileID: 1425077687}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 785, y: -250}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 300, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1918702560
@@ -21107,7 +21143,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2136881416}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1304814374}
+        m_TargetAssemblyTypeName: ProfileEditorForm, Assembly-CSharp
+        m_MethodName: ChangeNickname
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2136881416
 MonoBehaviour:
   m_ObjectHideFlags: 0
