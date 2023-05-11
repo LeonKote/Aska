@@ -43,7 +43,7 @@ public class ProfileEditorForm : MonoBehaviour
 	{
 		if (!Regex.IsMatch(nicknameInputField.text, "^[A-Za-zА-Яа-я0-9_]{3,18}$"))
 		{
-			Infobox.instance.ShowInfo("Имя может содержать только буквы/цифры длиной от 3 до 18 символов.", InfoType.red);
+			Infobox.instance.ShowInfo("Ник должен состоять из букв или цифр длиной от 3 до 18 символов.", InfoType.red);
 			return;
 		}
 		nickname = nicknameInputField.text;

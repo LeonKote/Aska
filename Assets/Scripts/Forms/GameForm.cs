@@ -9,7 +9,8 @@ public class GameForm : MonoBehaviour
 	private enum State
 	{
 		None,
-		Countdown,
+		GameCountdown,
+		RoundCountdown,
 		InGame
 	}
 
@@ -27,6 +28,7 @@ public class GameForm : MonoBehaviour
 	[Header("Quiz Question Form")]
 	public Animator quizQuestionFormAnimator;
 	public Text CountdownText;
+	public Text GameCountdownText;
 	public Text QuestionText;
 
 	[Header("Quiz Form")]
@@ -57,9 +59,15 @@ public class GameForm : MonoBehaviour
 	{
 		switch (state)
 		{
-			case State.Countdown:
+			case State.GameCountdown:
 				timerTime -= Time.deltaTime;
-				SetCountdownText();
+				SetGameCountdownText();
+				if (timerTime <= 0)
+					state = State.None;
+				break;
+			case State.RoundCountdown:
+				timerTime -= Time.deltaTime;
+				SetRoundCountdownText();
 				if (timerTime <= 0.5f)
 					quizQuestionFormAnimator.Play("QuizQuestionDisappearing");
 				if (timerTime <= 0)
@@ -82,7 +90,8 @@ public class GameForm : MonoBehaviour
 
 	public void OnTimerStart()
 	{
-
+		state = State.GameCountdown;
+		timerTime = 3.5f;
 	}
 
 	public void OnGameStart(string name)
@@ -91,6 +100,7 @@ public class GameForm : MonoBehaviour
 		QuizThemeForm.SetActive(true);
 		ScoreboardForm.SetActive(false);
 		QuizQuestionForm.SetActive(false);
+		GameCountdownText.text = "Игра скоро начнётся...";
 	}
 
 	public void CountdownForRoundStart(QuizQuestion question)
@@ -115,12 +125,17 @@ public class GameForm : MonoBehaviour
 		ScoreboardForm.SetActive(false);
 		QuizQuestionForm.SetActive(true);
 
-		state = State.Countdown;
+		state = State.RoundCountdown;
 	}
 
-	public void SetCountdownText()
+	public void SetRoundCountdownText()
 	{
 		CountdownText.text = Mathf.Round(timerTime).ToString();
+	}
+
+	public void SetGameCountdownText()
+	{
+		GameCountdownText.text = $"Игра начнётся через {Math.Round(timerTime)}...";
 	}
 
 	public void OnRoundStarted()
