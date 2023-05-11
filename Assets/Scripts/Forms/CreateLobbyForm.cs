@@ -53,7 +53,7 @@ public class CreateLobbyForm : MonoBehaviour
 		}
 	}
 	public void OnQuizPressed(string id)
-	{;
+	{
 		LocalClient.Send("create", id);
 	}
 }
