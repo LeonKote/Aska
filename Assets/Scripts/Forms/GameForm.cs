@@ -30,6 +30,7 @@ public class GameForm : MonoBehaviour
 	public Text CountdownText;
 	public Text GameCountdownText;
 	public Text QuestionText;
+	public Text QuestionCounterText;
 
 	[Header("Quiz Form")]
 	public Text QuizTitle;
@@ -105,6 +106,7 @@ public class GameForm : MonoBehaviour
 
 	public void CountdownForRoundStart(QuizQuestion question)
 	{
+		QuestionCounterText.text = "1 из 1"; // TODO: принимать с сервера количество вопросов и обновлять этот текст соответствующе
 		roundQuestion = question;
 		QuestionText.text = question.question;
 		timerTime = question.countdown;
