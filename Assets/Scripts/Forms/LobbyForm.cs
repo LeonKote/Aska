@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,17 @@ public class LobbyForm : MonoBehaviour
 {
 	public InputField InputField;
 	public Dropdown Dropdown;
-	private Quiz[] quizzes;
+	public Quiz[] Quizzes;
 	public GameObject menuForm;
 	public GameObject settingsForm;
 	public GameObject enterLobbyForm;
 	public GameObject createLobbyForm;
 	public GameObject quizEditorForm;
+	public GameObject profileEditorForm;
+
+	public Text nicknameText;
+	public RawImage avatarImage;
+	public Sprite blankAvatarSprite;
 
 	public GameObject activeForm;
 
@@ -21,6 +27,7 @@ public class LobbyForm : MonoBehaviour
 	{
 		activeForm = menuForm;
 	}
+
 	public void OnBackButtonPressed()
 	{
 		Transition.Instance.StartAnimation(() =>
@@ -68,20 +75,37 @@ public class LobbyForm : MonoBehaviour
 			activeForm = createLobbyForm;
 		});
 	}
+
+	public void OnProfileEditorButtonPressed()
+	{
+		Transition.Instance.StartAnimation(() =>
+		{
+			menuForm.SetActive(false);
+			profileEditorForm.SetActive(true);
+			activeForm = profileEditorForm;
+		});
+	}
+
 	public void OnJoinRoom()
 	{
 		LocalClient.Send("join", int.Parse(InputField.text));
 	}
 
-	public void OnCreateRoom()
+	public void UpdateProfileUI(string nickname, string avatar = null)
 	{
-		if (Dropdown.value == 0) return;
-		LocalClient.Send("create", quizzes[Dropdown.value - 1].id);
+		nicknameText.text = nickname;
+		if (avatar != null)
+		{
+			Texture2D tex = new Texture2D(2, 2);
+			tex.LoadImage(Convert.FromBase64String(avatar));
+			avatarImage.texture = tex;
+		}
+		else
+			avatarImage.texture = blankAvatarSprite.texture;
 	}
 
 	public void AddQuizzes(Quiz[] quizzes)
 	{
-		this.quizzes = quizzes;
-		Dropdown.AddOptions(quizzes.Select(x => x.name.Substring(0, Mathf.Min(x.name.Length, 25))).ToList());
+		this.Quizzes = quizzes;
 	}
 }

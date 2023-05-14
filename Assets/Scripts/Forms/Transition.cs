@@ -13,7 +13,8 @@ public class Transition : MonoBehaviour
 	public Animator animator;
 	private Action action;
 	private Vector3 startPosition;
-	public void Start()
+
+	public void Init()
 	{
 		gameObject.SetActive(false);
 		Instance = this;

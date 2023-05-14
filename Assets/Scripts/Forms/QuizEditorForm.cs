@@ -89,15 +89,6 @@ public class QuizEditorForm : MonoBehaviour
 		quizDescriptionInputField.text = quizDescription;
 	}
 
-	public void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.LeftArrow))
-			ChangeSelectedQuestion(false);
-
-		if (Input.GetKeyDown(KeyCode.RightArrow))
-			ChangeSelectedQuestion(true);
-	}
-	
 	public void OnQuizNameInputField()
 	{
 		quizName = quizNameInputField.text;
