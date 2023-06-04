@@ -19,14 +19,7 @@ public class CreateLobbyForm : MonoBehaviour
 	}
 	public void OnInputFieldChanged()
 	{
-		string query = searchInputField.text.ToLower();
-		List<Quiz> foundQuizzes = new List<Quiz>();
-		for (int i = 0; i < lobbyForm.Quizzes.Length; ++i)
-		{
-			if (lobbyForm.Quizzes[i].name.ToLower().Contains(query))
-				foundQuizzes.Add(lobbyForm.Quizzes[i]);
-		}
-		InstantiateQuizButtons(foundQuizzes.ToArray());
+		LocalClient.Send("searchQuiz", searchInputField.text);
 	}
 	public void InstantiateQuizButtons(Quiz[] quizzes)
 	{
@@ -37,9 +30,7 @@ public class CreateLobbyForm : MonoBehaviour
 			GameObject obj = Instantiate(quizObject, quizObjectParent);
 			if (quizzes[i].image != null)
 			{
-				Texture2D tex = new Texture2D(2, 2);
-				tex.LoadImage(Convert.FromBase64String(quizzes[i].image));
-				obj.transform.GetChild(0).GetComponent<RawImage>().texture = tex;
+				StartCoroutine(Utils.LoadImage((Texture t) => obj.transform.GetChild(0).GetComponent<RawImage>().texture = t, quizzes[i].image));
 			}
 			else
 				obj.transform.GetChild(0).GetComponent<RawImage>().texture = blankSprite.texture;

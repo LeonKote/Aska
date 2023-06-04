@@ -19,6 +19,9 @@ public class RoomForm : MonoBehaviour
 		if (clients.Length == 1)
 			StartButton.SetActive(true);
 		NameText.text = "Комната #" + code;
+		// TODO: Загрузка аватарок
+		/*foreach (Client client in clients)
+			StartCoroutine(Utils.LoadImage((Texture t) => client.icon = t, client.image));*/
 		this.clients = clients.ToDictionary(x => x.id, x => x);
 		UpdateClientList();
 	}

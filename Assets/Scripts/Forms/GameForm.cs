@@ -119,9 +119,7 @@ public class GameForm : MonoBehaviour
 			QuizAnswerButtons[i].transform.GetComponent<Image>().color = defaultButtonColors[i];
 		}
 
-		Texture2D tex = new Texture2D(2, 2);
-		tex.LoadImage(Convert.FromBase64String(question.image));
-		QuizImage.texture = tex;
+		StartCoroutine(Utils.LoadImage((Texture t) => QuizImage.texture = t, question.image));
 
 		QuizThemeForm.SetActive(false);
 		ScoreboardForm.SetActive(false);

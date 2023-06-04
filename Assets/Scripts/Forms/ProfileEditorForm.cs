@@ -5,39 +5,27 @@ using UnityEngine;
 using SFB;
 using UnityEngine.UI;
 using System;
+using System.IO;
 
 public class ProfileEditorForm : MonoBehaviour
 {
 	public LobbyForm lobbyForm;
-	public string avatarText;
-	public string nickname;
 	public RawImage avatarImage;
 	public Sprite blankSprite;
 	public InputField nicknameInputField;
-	public void OnFormOpened()
-	{
-		nicknameInputField.text = nickname;
-		if (avatarText != string.Empty)
-		{
-			Texture2D tex = new Texture2D(2, 2);
-			tex.LoadImage(Convert.FromBase64String(avatarText));
-			avatarImage.texture = tex;
-		}
-		else
-			avatarImage.texture = blankSprite.texture;
-	}
 	public void UploadAvatar()
 	{
 		var path = StandaloneFileBrowser.OpenFilePanel("Выбор аватарки", "", new ExtensionFilter[] { new("Image ", "png", "jpg", "jpeg") }, false);
-		if (path.Length > 0)
-		{
-			// TODO: ограничение по весу файла
-			Texture2D texture = new WWW(new Uri(path[0]).AbsoluteUri).texture;
-			avatarText = Convert.ToBase64String(texture.EncodeToPNG());
-			avatarImage.texture = texture;
-		}
-		lobbyForm.UpdateProfileUI(nickname, avatarText);
-		// TODO: выгрузка аватарки на сервер
+		if (path.Length == 0) return;
+		// TODO: ограничение по весу файла
+		byte[] bytes = File.ReadAllBytes(path[0]);
+
+		Texture2D texture = new Texture2D(2, 2);
+		texture.LoadImage(bytes);
+		avatarImage.texture = texture;
+		lobbyForm.avatarImage.texture = texture;
+
+		LocalClient.Send("avatar", Convert.ToBase64String(bytes));
 	}
 	public void ChangeNickname()
 	{
@@ -46,8 +34,8 @@ public class ProfileEditorForm : MonoBehaviour
 			Infobox.instance.ShowInfo("Ник должен состоять из букв или цифр длиной от 3 до 18 символов.", InfoType.red);
 			return;
 		}
-		nickname = nicknameInputField.text;
-		lobbyForm.UpdateProfileUI(nickname, avatarText);
-		// TODO: выгрузка никнейма на сервер
+		lobbyForm.UpdateProfileUI(nicknameInputField.text);
+
+		LocalClient.Send("name", nicknameInputField.text);
 	}
 }
