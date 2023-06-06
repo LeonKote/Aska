@@ -19,6 +19,8 @@ public class RoomForm : MonoBehaviour
 		if (clients.Length == 1)
 			StartButton.SetActive(true);
 		NameText.text = "Комната #" + code;
+		foreach (Client client in clients)
+			GameController.instance.StartCoroutine(Utils.LoadImage((Texture t) => client.icon = t, client.image));
 		this.clients = clients.ToDictionary(x => x.id, x => x);
 		UpdateClientList();
 	}

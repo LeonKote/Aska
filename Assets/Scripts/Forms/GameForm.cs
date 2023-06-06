@@ -20,7 +20,10 @@ public class GameForm : MonoBehaviour
 	public GameObject QuizForm;
 	public GameObject ScoreboardForm;
 	public GameObject LobbyForm;
+	public GameObject GameEndForm;
 	public LobbyForm LobbyFormScript;
+	public GameEndForm gameEndScript;
+	private ScoreboardForm scoreboard;
 
 	[Header("Quiz Theme Form")]
 	public Text QuizThemeText;
@@ -44,12 +47,13 @@ public class GameForm : MonoBehaviour
 	public string[] rightAnswerMessages;
 	public string[] wrongAnswerMessages;
 
+	private int questionCounter;
 	private QuizQuestion roundQuestion;
 	private State state;
 	private float timerTime;
+	private float tickingSoundTime;
+	private bool tickWithAnotherSound;
 	private int answer;
-
-	private ScoreboardForm scoreboard;
 
 	void Start()
 	{
@@ -58,16 +62,16 @@ public class GameForm : MonoBehaviour
 
 	void Update()
 	{
+		if (state != State.None)
+			timerTime -= Time.deltaTime;
 		switch (state)
 		{
 			case State.GameCountdown:
-				timerTime -= Time.deltaTime;
 				SetGameCountdownText();
 				if (timerTime <= 0)
 					state = State.None;
 				break;
 			case State.RoundCountdown:
-				timerTime -= Time.deltaTime;
 				SetRoundCountdownText();
 				if (timerTime <= 0.5f)
 					quizQuestionFormAnimator.Play("QuizQuestionDisappearing");
@@ -78,12 +82,18 @@ public class GameForm : MonoBehaviour
 				}
 				break;
 			case State.InGame:
-				timerTime -= Time.deltaTime;
 				SetTimerText();
 				if (timerTime <= 0)
 				{
 					SetAnswerButtonsInteractable(false);
 					state = State.None;
+				}
+				tickingSoundTime += Time.deltaTime;
+				if (tickingSoundTime >= 1)
+				{
+					SoundController.instance.PlayShortClip(tickWithAnotherSound ? "timertick2" : "timertick1");
+					tickWithAnotherSound = !tickWithAnotherSound;
+					tickingSoundTime = 0;
 				}
 				break;
 		}
@@ -97,6 +107,7 @@ public class GameForm : MonoBehaviour
 
 	public void OnGameStart(string name)
 	{
+		questionCounter = 0;
 		QuizThemeText.text = name;
 		QuizThemeForm.SetActive(true);
 		ScoreboardForm.SetActive(false);
@@ -106,7 +117,8 @@ public class GameForm : MonoBehaviour
 
 	public void CountdownForRoundStart(QuizQuestion question)
 	{
-		QuestionCounterText.text = "1 из 1"; // TODO: принимать с сервера количество вопросов и обновлять этот текст соответствующе
+		++questionCounter;
+		QuestionCounterText.text = $"{questionCounter} из 1"; // TODO: принимать с сервера количество вопросов и обновлять этот текст соответствующе
 		roundQuestion = question;
 		QuestionText.text = question.question;
 		timerTime = question.countdown;
@@ -119,12 +131,11 @@ public class GameForm : MonoBehaviour
 			QuizAnswerButtons[i].transform.GetComponent<Image>().color = defaultButtonColors[i];
 		}
 
-		Texture2D tex = new Texture2D(2, 2);
-		tex.LoadImage(Convert.FromBase64String(question.image));
-		QuizImage.texture = tex;
-
+		StartCoroutine(Utils.LoadImage((Texture t) => QuizImage.texture = t, question.image));
+		QuizImage.GetComponent<ResizeRawImage>().AdjustSize();
 		QuizThemeForm.SetActive(false);
 		ScoreboardForm.SetActive(false);
+		GameEndForm.SetActive(false);
 		QuizQuestionForm.SetActive(true);
 
 		state = State.RoundCountdown;
@@ -146,7 +157,8 @@ public class GameForm : MonoBehaviour
 		SetAnswerButtonsInteractable(true);
 
 		QuizForm.SetActive(true);
-
+		tickingSoundTime = 1;
+		tickWithAnotherSound = false;
 		state = State.InGame;
 	}
 
@@ -157,21 +169,14 @@ public class GameForm : MonoBehaviour
 
 		if (answer == -1)
 			return;
+
 		for (int i = 0; i < QuizAnswerButtons.Length; ++i)
-		{
-			if (i == id)
-				QuizAnswerButtons[i].GetComponent<Image>().color = rightAnswerColor;
-			else
-				QuizAnswerButtons[i].GetComponent<Image>().color = wrongAnswerColor;
-		}
+			QuizAnswerButtons[i].GetComponent<Image>().color = i == id ? rightAnswerColor : wrongAnswerColor;
+
 		if (answer == id)
-		{
 			Infobox.instance.ShowInfo(rightAnswerMessages[UnityEngine.Random.Range(0, rightAnswerMessages.Length)], InfoType.green);
-		}
 		else
-		{
 			Infobox.instance.ShowInfo(wrongAnswerMessages[UnityEngine.Random.Range(0, wrongAnswerMessages.Length)], InfoType.red);
-		}
 	}
 
 	public void OnRoundEnded(Dictionary<int, int> score)
@@ -198,12 +203,14 @@ public class GameForm : MonoBehaviour
 
 	public void OnGameEnded()
 	{
-
+		ScoreboardForm.SetActive(false);
+		gameEndScript.SetUpForm();
+		GameEndForm.SetActive(true);
 	}
 
 	public void SetTimerText()
 	{
-		QuizTimerText.text = Mathf.Round(timerTime).ToString();
+		QuizTimerText.text = Mathf.Floor(timerTime).ToString();
 	}
 
 	public void OnAnswerButtonPressed(int answerIndex)

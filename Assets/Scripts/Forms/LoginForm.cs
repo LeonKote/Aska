@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -9,7 +10,7 @@ public class LoginForm : MonoBehaviour
 	public InputField InputField;
 	public LobbyForm LobbyForm;
 
-	public void OnLogin()
+	public void OnLoginName()
 	{
 		if (!Regex.IsMatch(InputField.text, "^[A-Za-zР-пр-џ0-9_]{3,18}$"))
 		{
@@ -17,8 +18,27 @@ public class LoginForm : MonoBehaviour
 			InputField.text = "";
 			return;
 		}
-		LobbyForm.UpdateProfileUI(InputField.text);
-		LocalClient.Send("auth", InputField.text);
+		LocalClient.Send("auth", new JObject()
+		{
+			{ "type", "name" },
+			{ "name", InputField.text }
+		});
+	}
+
+	public void OnLoginVK()
+	{
+		LocalClient.Send("auth", new JObject()
+		{
+			{ "type", "vk" }
+		});
+	}
+
+	public void OnLoginTelegram()
+	{
+		LocalClient.Send("auth", new JObject()
+		{
+			{ "type", "tg" }
+		});
 	}
 
 	public void OnLocalClientConnected()

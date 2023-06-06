@@ -6,6 +6,7 @@ public class GameController : MonoBehaviour
 {
 	public SettingsForm settingsForm;
 	public Transition transition;
+	public static GameController instance;
 
 	public void Init()
 	{
@@ -14,6 +15,7 @@ public class GameController : MonoBehaviour
 	}
 	public void Awake()
 	{
+		instance = this;
 		Init();
 	}
 	public void Quit()

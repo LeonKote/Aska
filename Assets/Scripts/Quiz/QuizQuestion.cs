@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using UnityEngine;
+using Newtonsoft.Json;
 
 [System.Serializable]
 public class QuizQuestion
@@ -6,6 +8,7 @@ public class QuizQuestion
 	public string question;
 	public string[] answers;
 	public string image;
+	[JsonIgnore] public Texture icon;
 	public int time;
 	public int countdown;
 	public int rightAnswerIndex;

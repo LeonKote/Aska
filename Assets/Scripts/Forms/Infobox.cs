@@ -34,6 +34,7 @@ public class Infobox : MonoBehaviour
 		Color32 color = colors[(int)type];
 
 		StartCoroutine(InfoCoroutine(sprite, color, message));
+		SoundController.instance.PlayShortClip(type == InfoType.green ? "success" : "fail");
 	}
 	private IEnumerator InfoCoroutine(Sprite sprite, Color32 color, string message)
 	{
