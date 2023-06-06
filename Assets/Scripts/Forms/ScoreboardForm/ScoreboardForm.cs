@@ -21,11 +21,16 @@ public class ScoreboardForm : MonoBehaviour
 			InitScoreboard(score);
 		}
 
+		foreach (int id in score.Keys)
+		{
+			scoreboardPlayers[id].Score = score[id];
+		}
+
 		var list = scoreboardPlayers.OrderByDescending(x => x.Value.score).ToList();
 
 		for (int i = 0; i < list.Count; i++)
 		{
-			list[i].Value.SetScore(score[list[i].Key], i);
+			list[i].Value.SetPos(i);
 		}
 	}
 

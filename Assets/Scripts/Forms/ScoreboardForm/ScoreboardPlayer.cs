@@ -23,6 +23,16 @@ public class ScoreboardPlayer : MonoBehaviour
 	private float timeElapsed = 0;
 	private bool isChanging;
 
+	public int Score
+	{
+		get { return score; }
+		set
+		{
+			prevScore = score;
+			score = value;
+		}
+	}
+
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -48,10 +58,8 @@ public class ScoreboardPlayer : MonoBehaviour
 		}
 	}
 
-	public void SetScore(int score, int pos)
+	public void SetPos(int pos)
 	{
-		this.prevScore = this.score;
-		this.score = score;
 		prevVecPos = vecPos;
 		vecPos = startVec + pos * offsetVec;
 		isChanging = true;
