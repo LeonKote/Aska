@@ -9,7 +9,6 @@ public class Transition : MonoBehaviour
 	public static Transition Instance { get; private set; }
 
 	public Color32[] colorPalette;
-	// TODO: исправить проблему с недоступностью объектов при анимации (анимация не стартует заново, а должна)
 	public Animator animator;
 	private Action action;
 	private Vector3 startPosition;
