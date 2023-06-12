@@ -60,7 +60,7 @@ public class GameForm : MonoBehaviour
 	{
 		scoreboard = ScoreboardForm.GetComponent<ScoreboardForm>();
 	}
-	// TODO: дубилурю с scoreboardform - у хоста жесткие проблемы с отображением скорборда (скорее всего список клиентов не обновл€етс€)
+	// TODO: (возможно исправлено) дубилурю с scoreboardform - у хоста жесткие проблемы с отображением скорборда (скорее всего список клиентов не обновл€етс€)
 	void Update()
 	{
 		if (state != State.None)
@@ -223,10 +223,9 @@ public class GameForm : MonoBehaviour
 
 	public void OnGameEnded()
 	{
-		SoundController.instance.SetLowPassFilter(false, 0, false);
-		SoundController.instance.PlayMusic("lobby");
+		SoundController.instance.StopMusic();
 		ScoreboardForm.SetActive(false);
-		DiscordController.instance.UpdateActivity("¬ игре", "Ёкран конца игры");
+		DiscordController.instance.UpdateActivity($"¬ игре #{roomFormScript.roomCode}", "Ќа экране конца игры", roomFormScript.quiz.name);
 		gameEndScript.SetUpForm();
 		GameEndForm.SetActive(true);
 	}
