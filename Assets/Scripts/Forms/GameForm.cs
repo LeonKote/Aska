@@ -60,8 +60,6 @@ public class GameForm : MonoBehaviour
 	{
 		scoreboard = ScoreboardForm.GetComponent<ScoreboardForm>();
 	}
-	// TODO: проверить что в билде после окончания таймера, происходят странности (выдает сообщение о том что ответ правильный, хотя игрок не ответил И не подсвечиваются правильные ответы)
-	// TODO: когда клиент выходит из игры, раунд почему-то заканчивается
 	// TODO: дубилурю с scoreboardform - у хоста жесткие проблемы с отображением скорборда (скорее всего список клиентов не обновляется)
 	void Update()
 	{
@@ -123,6 +121,7 @@ public class GameForm : MonoBehaviour
 		GameEndForm.SetActive(false);
 		SoundController.instance.SetLowPassFilter(true, 10f);
 		GameCountdownText.text = "Игра скоро начнётся...";
+		DiscordController.instance.UpdateActivity($"В игре #{roomFormScript.roomCode}", "Ожидание начала игры", roomFormScript.quiz.name);
 	}
 
 	public void CountdownForRoundStart(QuizQuestion question)
@@ -133,6 +132,9 @@ public class GameForm : MonoBehaviour
 		roundQuestion = question;
 		QuestionText.text = question.question;
 		timerTime = question.countdown;
+		DiscordController.instance.UpdateActivity($"В игре #{roomFormScript.roomCode}", 
+			$"Вопрос {questionCounter} из {roomFormScript.quiz.questionsCount}", 
+			roomFormScript.quiz.name);
 
 		QuizTitle.text = question.question;
 
@@ -215,6 +217,7 @@ public class GameForm : MonoBehaviour
 			LobbyFormScript.createLobbyForm.SetActive(false);
 			LobbyFormScript.menuForm.SetActive(true);
 			LobbyFormScript.activeForm = LobbyFormScript.menuForm;
+			DiscordController.instance.UpdateActivity($"В главном меню");
 		});
 	}
 
@@ -223,6 +226,7 @@ public class GameForm : MonoBehaviour
 		SoundController.instance.SetLowPassFilter(false, 0, false);
 		SoundController.instance.PlayMusic("lobby");
 		ScoreboardForm.SetActive(false);
+		DiscordController.instance.UpdateActivity("В игре", "Экран конца игры");
 		gameEndScript.SetUpForm();
 		GameEndForm.SetActive(true);
 	}

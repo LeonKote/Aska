@@ -88,8 +88,6 @@ public class SoundController : MonoBehaviour
 	private float maxVolume;
 	private float filterFadeDuration;
 
-
-	// TODO: в билде музыка в раундах воспроизводиться не моментально, через 3 секунды
 	public void Awake()
 	{
 		lowPassFilter = musicAudioSource.GetComponent<AudioLowPassFilter>();

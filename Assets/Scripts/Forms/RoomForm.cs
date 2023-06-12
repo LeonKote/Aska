@@ -24,6 +24,7 @@ public class RoomForm : MonoBehaviour
 	public RoomSettings roomSettings;
 	public Quiz quiz;
 	private bool isLocalClientHosted;
+	public int roomCode;
 	public GameObject roomForm;
 	public GameObject roomSettingsForm;
 	public InputField maxPlayersInputField;
@@ -49,6 +50,7 @@ public class RoomForm : MonoBehaviour
 			StartButton.SetActive(false);
 			EditRoomSettingsButton.SetActive(false);
 		}
+		roomCode = code;
 		NameText.text = "Комната #" + code;
 		this.quiz = quiz;
 		UpdateQuizInfoPanel();
@@ -59,6 +61,7 @@ public class RoomForm : MonoBehaviour
 				client.icon = t;
 				UpdateClientList();
 			}, client.image, blankAvatarSprite.texture));
+		DiscordController.instance.UpdateActivity($"В комнате #{code}", $"Игроков в комнате: {clients.Length}", quiz.name);
 	}
 
 	public void OnClientJoin(Client client)
@@ -70,6 +73,7 @@ public class RoomForm : MonoBehaviour
 			temp.Value.icon = t;
 			UpdateClientList();
 		}, client.image, blankAvatarSprite.texture));
+		DiscordController.instance.UpdateActivity($"В комнате #{roomCode}", $"Игроков в комнате: {clients.Count}", quiz.name);
 	}
 
 	public void UpdateQuizInfoPanel()
@@ -93,6 +97,7 @@ public class RoomForm : MonoBehaviour
 			lobbyForm.createLobbyForm.SetActive(false);
 			lobbyForm.menuForm.SetActive(true);
 			lobbyForm.activeForm = lobbyForm.menuForm;
+			DiscordController.instance.UpdateActivity($"В главном меню");
 		});
 	}
 

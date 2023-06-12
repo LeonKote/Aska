@@ -23,6 +23,7 @@ public class Transition : MonoBehaviour
 
 	public void StartAnimation(Action action)
 	{
+		animator.Rebind();
 		this.action = action;
 		gameObject.GetComponent<Image>().color = colorPalette[UnityEngine.Random.Range(0, colorPalette.Length)];
 		gameObject.SetActive(true);

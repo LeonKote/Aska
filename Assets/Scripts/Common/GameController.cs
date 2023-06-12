@@ -26,6 +26,14 @@ public class GameController : MonoBehaviour
 
 	public void Quit()
 	{
+#if !UNITY_EDITOR
+		DiscordController.instance.discord.Dispose();
+#endif
 		Application.Quit();
+	}
+
+	public void OnApplicationQuit()
+	{
+		DiscordController.instance.discord.Dispose();
 	}
 }

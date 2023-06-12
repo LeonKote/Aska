@@ -39,7 +39,6 @@ public class LocalClient : ClientSocket
 		StartClient();
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
 		ProcessResponses();
