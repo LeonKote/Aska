@@ -101,7 +101,8 @@ public class LocalClient : ClientSocket
 				createLobby.InstantiateQuizButtons(response["searchQuiz"].ToObject<Quiz[]>());
 				break;
 			case "roomJoin":
-				room.OnLocalClientJoin((int)response["roomJoin"]["code"], response["roomJoin"]["clients"].ToObject<Client[]>());
+				room.OnLocalClientJoin((int)response["roomJoin"]["code"], response["roomJoin"]["clients"].ToObject<Client[]>(),
+					response["roomJoin"]["quiz"].ToObject<Quiz>());
 				Transition.Instance.StartAnimation(() =>
 				{
 					LobbyForm.SetActive(false);
@@ -151,7 +152,7 @@ public class LocalClient : ClientSocket
 		}
 	}
 
-	public static void Send(string key, JToken? value)
+	public static void Send(string key, JToken? value = null)
 	{
 		SendRequest(JsonConvert.SerializeObject(new JObject { { key, value } }, Formatting.None));
 	}

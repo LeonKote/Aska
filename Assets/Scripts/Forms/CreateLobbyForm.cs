@@ -50,6 +50,7 @@ public class CreateLobbyForm : MonoBehaviour
 			}
 			else
 				obj.transform.GetChild(0).GetComponent<RawImage>().texture = blankSprite.texture;
+			obj.transform.GetChild(0).GetComponent<ResizeRawImage>().AdjustSize();
 
 			obj.transform.GetChild(1).GetComponent<Text>().text =
 				string.IsNullOrEmpty(quiz.name) ? "Без названия" : quiz.name;

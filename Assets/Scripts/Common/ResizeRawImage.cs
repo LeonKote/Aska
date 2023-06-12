@@ -7,8 +7,11 @@ public class ResizeRawImage : MonoBehaviour
     public float maxHeight;
 
     private RawImage rawImage;
-
-    public void AdjustSize()
+	public void Start()
+	{
+        AdjustSize();
+	}
+	public void AdjustSize()
     {
         if (rawImage == null)
             rawImage = GetComponent<RawImage>();

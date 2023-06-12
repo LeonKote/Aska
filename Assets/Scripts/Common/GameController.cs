@@ -18,6 +18,12 @@ public class GameController : MonoBehaviour
 		instance = this;
 		Init();
 	}
+
+	public void Start()
+	{
+		SoundController.instance.PlayMusic("lobby", true);
+	}
+
 	public void Quit()
 	{
 		Application.Quit();

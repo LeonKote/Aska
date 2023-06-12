@@ -10,7 +10,7 @@ public class ScoreboardForm : MonoBehaviour
 	public RoomForm Room;
 	public GameObject ScoreboardPlayerPrefab;
 	public Sprite blankAvatarSprite;
-
+	// TODO: у хоста комнаты проблемы с отображением результатов игры
 	private Dictionary<int, ScoreboardPlayer> scoreboardPlayers = new Dictionary<int, ScoreboardPlayer>();
 	public Dictionary<int, ScoreboardPlayer> ScoreboardPlayers { get { return scoreboardPlayers; } }
 	public void UpdateScore(Dictionary<int, int> score)
@@ -31,6 +31,16 @@ public class ScoreboardForm : MonoBehaviour
 		for (int i = 0; i < list.Count; i++)
 		{
 			list[i].Value.SetPos(i);
+		}
+
+		foreach (var player in scoreboardPlayers)
+		{
+			if (player.Value.isChanging)
+			{
+				SoundController.instance.PlayShortClip("scoreboard");
+				Debug.Log("runned after");
+				break;
+			}
 		}
 	}
 

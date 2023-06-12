@@ -21,7 +21,7 @@ public class ScoreboardPlayer : MonoBehaviour
 
 	private Text scoreText;
 	private float timeElapsed = 0;
-	private bool isChanging;
+	public bool isChanging;
 
 	public int Score
 	{
@@ -33,13 +33,11 @@ public class ScoreboardPlayer : MonoBehaviour
 		}
 	}
 
-	// Start is called before the first frame update
 	void Start()
 	{
 		scoreText = transform.GetChild(2).GetComponent<Text>();
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
 		if (!isChanging) return;

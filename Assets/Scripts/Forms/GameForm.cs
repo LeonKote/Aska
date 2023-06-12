@@ -23,6 +23,7 @@ public class GameForm : MonoBehaviour
 	public GameObject GameEndForm;
 	public LobbyForm LobbyFormScript;
 	public GameEndForm gameEndScript;
+	public RoomForm roomFormScript;
 	private ScoreboardForm scoreboard;
 
 	[Header("Quiz Theme Form")]
@@ -51,15 +52,17 @@ public class GameForm : MonoBehaviour
 	private QuizQuestion roundQuestion;
 	private State state;
 	private float timerTime;
-	private float tickingSoundTime;
-	private bool tickWithAnotherSound;
-	private int answer;
+	private int answer = -1;
+	private bool riserPlayed;
+	private bool countdownSoundPlayed;
 
 	void Start()
 	{
 		scoreboard = ScoreboardForm.GetComponent<ScoreboardForm>();
 	}
-
+	// TODO: проверить что в билде после окончания таймера, происходят странности (выдает сообщение о том что ответ правильный, хотя игрок не ответил И не подсвечиваются правильные ответы)
+	// TODO: когда клиент выходит из игры, раунд почему-то заканчивается
+	// TODO: дубилурю с scoreboardform - у хоста жесткие проблемы с отображением скорборда (скорее всего список клиентов не обновляется)
 	void Update()
 	{
 		if (state != State.None)
@@ -73,6 +76,11 @@ public class GameForm : MonoBehaviour
 				break;
 			case State.RoundCountdown:
 				SetRoundCountdownText();
+				if (timerTime <= 1f && !riserPlayed)
+				{
+					SoundController.instance.PlayShortClip("riser");
+					riserPlayed = true;
+				}
 				if (timerTime <= 0.5f)
 					quizQuestionFormAnimator.Play("QuizQuestionDisappearing");
 				if (timerTime <= 0)
@@ -83,17 +91,15 @@ public class GameForm : MonoBehaviour
 				break;
 			case State.InGame:
 				SetTimerText();
+				if (timerTime <= 3f && !countdownSoundPlayed)
+				{
+					SoundController.instance.StartCountdown(3);
+					countdownSoundPlayed = true;
+				}
 				if (timerTime <= 0)
 				{
-					SetAnswerButtonsInteractable(false);
+					QuizTimerText.text = "0";
 					state = State.None;
-				}
-				tickingSoundTime += Time.deltaTime;
-				if (tickingSoundTime >= 1)
-				{
-					SoundController.instance.PlayShortClip(tickWithAnotherSound ? "timertick2" : "timertick1");
-					tickWithAnotherSound = !tickWithAnotherSound;
-					tickingSoundTime = 0;
 				}
 				break;
 		}
@@ -102,7 +108,7 @@ public class GameForm : MonoBehaviour
 	public void OnTimerStart()
 	{
 		state = State.GameCountdown;
-		timerTime = 3.5f;
+		timerTime = 3f;
 	}
 
 	public void OnGameStart(string name)
@@ -110,15 +116,20 @@ public class GameForm : MonoBehaviour
 		questionCounter = 0;
 		QuizThemeText.text = name;
 		QuizThemeForm.SetActive(true);
+		countdownSoundPlayed = false;
 		ScoreboardForm.SetActive(false);
+		QuizForm.SetActive(false);
 		QuizQuestionForm.SetActive(false);
+		GameEndForm.SetActive(false);
+		SoundController.instance.SetLowPassFilter(true, 10f);
 		GameCountdownText.text = "Игра скоро начнётся...";
 	}
 
 	public void CountdownForRoundStart(QuizQuestion question)
 	{
+		SoundController.instance.StopMusic();
 		++questionCounter;
-		QuestionCounterText.text = $"{questionCounter} из 1"; // TODO: принимать с сервера количество вопросов и обновлять этот текст соответствующе
+		QuestionCounterText.text = $"{questionCounter} из {roomFormScript.quiz.questionsCount}";
 		roundQuestion = question;
 		QuestionText.text = question.question;
 		timerTime = question.countdown;
@@ -131,45 +142,46 @@ public class GameForm : MonoBehaviour
 			QuizAnswerButtons[i].transform.GetComponent<Image>().color = defaultButtonColors[i];
 		}
 
-		StartCoroutine(Utils.LoadImage((Texture t) => QuizImage.texture = t, question.image));
-		QuizImage.GetComponent<ResizeRawImage>().AdjustSize();
+		StartCoroutine(Utils.LoadImage((Texture t) => 
+		{ 
+			QuizImage.texture = t; 
+			QuizImage.GetComponent<ResizeRawImage>().AdjustSize(); 
+		}, question.image));
+
 		QuizThemeForm.SetActive(false);
 		ScoreboardForm.SetActive(false);
-		GameEndForm.SetActive(false);
 		QuizQuestionForm.SetActive(true);
-
+		riserPlayed = false;
 		state = State.RoundCountdown;
+		SoundController.instance.StartCountdown(question.countdown);
 	}
 
 	public void SetRoundCountdownText()
 	{
-		CountdownText.text = Mathf.Round(timerTime).ToString();
+		CountdownText.text = Mathf.Ceil(timerTime).ToString();
 	}
 
 	public void SetGameCountdownText()
 	{
-		GameCountdownText.text = $"Игра начнётся через {Math.Round(timerTime)}...";
+		GameCountdownText.text = $"Игра начнётся через {Mathf.Ceil(timerTime)}...";
 	}
 
 	public void OnRoundStarted()
 	{
 		timerTime = roundQuestion.time;
 		SetAnswerButtonsInteractable(true);
-
+		SoundController.instance.SetLowPassFilter(false, 0f, false);
+		SoundController.instance.PlayMusic("ingame");
 		QuizForm.SetActive(true);
-		tickingSoundTime = 1;
-		tickWithAnotherSound = false;
+		countdownSoundPlayed = false;
 		state = State.InGame;
 	}
 
 	public void OnRightAnswer(int id)
 	{
 		state = State.None;
-		SetAnswerButtonsInteractable(false);
-
-		if (answer == -1)
-			return;
-
+		SoundController.instance.SetLowPassFilter(true, 5f);
+		SetAnswerButtonsInteractable(false, answer);
 		for (int i = 0; i < QuizAnswerButtons.Length; ++i)
 			QuizAnswerButtons[i].GetComponent<Image>().color = i == id ? rightAnswerColor : wrongAnswerColor;
 
@@ -192,8 +204,13 @@ public class GameForm : MonoBehaviour
 	{
 		Transition.Instance.StartAnimation(() =>
 		{
+			LocalClient.Send("leave");
+			SoundController.instance.SetLowPassFilter(false, 5, false);
+			SoundController.instance.PlayMusic("lobby", true);
+			SoundController.instance.ForceCountdownStop();
 			gameObject.SetActive(false);
 			LobbyForm.SetActive(true);
+			state = State.None;
 			LobbyFormScript.enterLobbyForm.SetActive(false);
 			LobbyFormScript.createLobbyForm.SetActive(false);
 			LobbyFormScript.menuForm.SetActive(true);
@@ -203,6 +220,8 @@ public class GameForm : MonoBehaviour
 
 	public void OnGameEnded()
 	{
+		SoundController.instance.SetLowPassFilter(false, 0, false);
+		SoundController.instance.PlayMusic("lobby");
 		ScoreboardForm.SetActive(false);
 		gameEndScript.SetUpForm();
 		GameEndForm.SetActive(true);
@@ -210,20 +229,20 @@ public class GameForm : MonoBehaviour
 
 	public void SetTimerText()
 	{
-		QuizTimerText.text = Mathf.Floor(timerTime).ToString();
+		QuizTimerText.text = Mathf.Ceil(timerTime).ToString();
 	}
 
 	public void OnAnswerButtonPressed(int answerIndex)
 	{
 		LocalClient.Send("answer", answerIndex);
 		answer = answerIndex;
-
-		SetAnswerButtonsInteractable(false);
+		SoundController.instance.ForceCountdownStop();
+		SetAnswerButtonsInteractable(false, answerIndex);
 	}
 
-	public void SetAnswerButtonsInteractable(bool enable)
+	public void SetAnswerButtonsInteractable(bool enable, int indexForSkip = -1)
 	{
-		foreach (GameObject quizAnswerButton in QuizAnswerButtons)
-			quizAnswerButton.GetComponent<Button>().interactable = enable;
+		for (int i = 0; i < QuizAnswerButtons.Length; ++i)
+				QuizAnswerButtons[i].GetComponent<Button>().interactable = i == indexForSkip ? !enable : enable;
 	}
 }
