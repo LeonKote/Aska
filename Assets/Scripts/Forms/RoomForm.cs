@@ -61,7 +61,7 @@ public class RoomForm : MonoBehaviour
 				client.icon = t;
 				UpdateClientList();
 			}, client.image, blankAvatarSprite.texture));
-		DiscordController.instance.UpdateActivity($"В комнате #{code}", $"Игроков в комнате: {clients.Length}", quiz.name);
+		DiscordController.instance.UpdateActivity($"В комнате #{code}", $"Игроков в комнате: {clients.Length}", quiz.name, roomCode.ToString());
 	}
 
 	public void OnClientJoin(Client client)
@@ -73,7 +73,7 @@ public class RoomForm : MonoBehaviour
 			temp.Value.icon = t;
 			UpdateClientList();
 		}, client.image, blankAvatarSprite.texture));
-		DiscordController.instance.UpdateActivity($"В комнате #{roomCode}", $"Игроков в комнате: {clients.Count}", quiz.name);
+		DiscordController.instance.UpdateActivity($"В комнате #{roomCode}", $"Игроков в комнате: {clients.Count}", quiz.name, roomCode.ToString());
 	}
 
 	public void UpdateQuizInfoPanel()
@@ -105,6 +105,7 @@ public class RoomForm : MonoBehaviour
 	{
 		clients.Remove(client.id);
 		UpdateClientList();
+		DiscordController.instance.UpdateActivity($"В комнате #{roomCode}", $"Игроков в комнате: {clients.Count}", quiz.name, roomCode.ToString());
 	}
 
 	public void UpdateClientList()

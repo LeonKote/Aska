@@ -32,6 +32,6 @@ public class GameController : MonoBehaviour
 
 	public void OnApplicationQuit()
 	{
-		DiscordController.instance.ClearActivity();
+		DiscordController.instance.discord.Dispose();
 	}
 }

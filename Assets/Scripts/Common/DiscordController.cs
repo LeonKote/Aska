@@ -20,26 +20,19 @@ public class DiscordController : MonoBehaviour
 		UpdateActivity($"В главном меню");
 	}
 
-	public void UpdateActivity(string details, string state = "", string largeText = "", int count = 0, int maxCount = 0)
+	public void UpdateActivity(string details, string state = "", string largeText = "", string secret = "")
 	{
 		var assets = new ActivityAssets();
 		assets.LargeText = largeText;
 		assets.LargeImage = "logo";
 
-		var partySize = new PartySize();
-		partySize.CurrentSize = count;
-		partySize.MaxSize = maxCount;
-
-		var party = new ActivityParty();
-		party.Size = partySize;
 
 		var activity = new Activity
 		{
 			State = state,
 			Details = details,
 			Type = ActivityType.Playing,
-			Assets = assets,
-			Party = party
+			Assets = assets
 		};
 
 		activityManager.UpdateActivity(activity, (res) =>

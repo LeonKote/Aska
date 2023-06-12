@@ -182,6 +182,7 @@ public class GameForm : MonoBehaviour
 	public void OnRightAnswer(int id)
 	{
 		state = State.None;
+		SoundController.instance.ForceCountdownStop();
 		SoundController.instance.SetLowPassFilter(true, 5f);
 		SetAnswerButtonsInteractable(false, answer);
 		for (int i = 0; i < QuizAnswerButtons.Length; ++i)

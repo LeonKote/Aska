@@ -242,7 +242,7 @@ public class SoundController : MonoBehaviour
 
 	public void StopMusic(bool needFade = true, bool loopOrder = false)
 	{
-		SetLoopOrder(loopOrder);
+		SetLoopOrder(loopOrder, loopOrderMusic);
 		fadingTimer = 0;
 		if (!needFade)
 		{

@@ -104,6 +104,7 @@ public class LocalClient : ClientSocket
 					response["roomJoin"]["quiz"].ToObject<Quiz>());
 				Transition.Instance.StartAnimation(() =>
 				{
+					LobbyForm.GetComponent<LobbyForm>().activeForm.SetActive(false);
 					LobbyForm.SetActive(false);
 					RoomForm.SetActive(true);
 				});
