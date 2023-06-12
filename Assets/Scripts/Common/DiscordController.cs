@@ -55,6 +55,21 @@ public class DiscordController : MonoBehaviour
 		});
 	}
 
+	public void ClearActivity()
+	{
+		activityManager.ClearActivity((res) =>
+		{
+			if (res == Result.Ok)
+			{
+				Debug.Log("Discord activity cleared");
+			}
+			else
+			{
+				Debug.LogError($"Discord activity clear error {res}");
+			}
+		});
+	}
+
 	public void Update()
 	{
 		discord.RunCallbacks();
