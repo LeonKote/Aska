@@ -9,7 +9,6 @@ public class Transition : MonoBehaviour
 	public static Transition Instance { get; private set; }
 
 	public Color32[] colorPalette;
-
 	public Animator animator;
 	private Action action;
 	private Vector3 startPosition;
@@ -23,6 +22,7 @@ public class Transition : MonoBehaviour
 
 	public void StartAnimation(Action action)
 	{
+		animator.Rebind();
 		this.action = action;
 		gameObject.GetComponent<Image>().color = colorPalette[UnityEngine.Random.Range(0, colorPalette.Length)];
 		gameObject.SetActive(true);

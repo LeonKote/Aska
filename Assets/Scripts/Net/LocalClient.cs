@@ -12,11 +12,19 @@ public class LocalClient : ClientSocket
 	public GameObject LobbyForm;
 	public GameObject RoomForm;
 	public GameObject GameForm;
+	public GameObject CreateLobbyForm;
+	public GameObject ProfileEditorForm;
 
 	private LoginForm login;
 	private LobbyForm lobby;
 	private RoomForm room;
 	private GameForm game;
+	private CreateLobbyForm createLobby;
+	private ProfileEditorForm profileEditorForm;
+
+	private int id;
+	public bool isAuthorizedBySocial;
+	public int Id { get { return id; }}
 
 	// Start is called before the first frame update
 	void Start()
@@ -25,11 +33,12 @@ public class LocalClient : ClientSocket
 		lobby = LobbyForm.GetComponent<LobbyForm>();
 		room = RoomForm.GetComponent<RoomForm>();
 		game = GameForm.GetComponent<GameForm>();
+		createLobby = CreateLobbyForm.GetComponent<CreateLobbyForm>();
+		profileEditorForm = ProfileEditorForm.GetComponent<ProfileEditorForm>();
 
 		StartClient();
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
 		ProcessResponses();
@@ -43,32 +52,68 @@ public class LocalClient : ClientSocket
 		{
 			case "socket":
 				login.OnLocalClientConnected();
-				break;
-			case "auth":
-				if ((bool)response["auth"]["result"] == true)
+				if (PlayerPrefs.HasKey("token"))
 				{
-					lobby.AddQuizzes(JsonConvert.DeserializeObject<Quiz[]>(response["auth"]["quizzes"].ToString()));
-					Transition.Instance.StartAnimation(() =>
+					isAuthorizedBySocial = true;
+					Send("auth", new JObject()
 					{
-						LoginForm.SetActive(false);
-						LobbyForm.SetActive(true);
+						{ "type", "token" },
+						{ "token", PlayerPrefs.GetString("token") }
 					});
 				}
 				break;
+			case "auth":
+				switch ((string)response["auth"]["type"])
+				{
+					case "url":
+						System.Diagnostics.Process.Start((string)response["auth"]["url"]);
+						break;
+					case "success":
+						string name = (string)response["auth"]["profile"]["name"];
+						lobby.nicknameText.text = name;
+						profileEditorForm.nicknameInputField.text = name;
+
+						if (response["auth"]["token"] != null)
+						{
+							PlayerPrefs.SetString("token", (string)response["auth"]["token"]);
+							isAuthorizedBySocial = true;
+						}
+
+						if (response["auth"]["profile"]["image"] != null)
+							StartCoroutine(Utils.LoadImage((Texture t) =>
+							{
+								lobby.avatarImage.texture = t;
+								profileEditorForm.avatarImage.texture = t;
+							}, (string)response["auth"]["profile"]["image"]));
+						else
+							lobby.avatarImage.texture = lobby.blankAvatarSprite.texture;
+						id = (int)response["auth"]["profile"]["id"];
+						Transition.Instance.StartAnimation(() =>
+						{
+							LoginForm.SetActive(false);
+							LobbyForm.SetActive(true);
+						});
+						break;
+				}
+				break;
+			case "searchQuiz":
+				createLobby.InstantiateQuizButtons(response["searchQuiz"].ToObject<Quiz[]>());
+				break;
 			case "roomJoin":
-				room.OnLocalClientJoin((int)response["roomJoin"]["code"],
-					JsonConvert.DeserializeObject<Client[]>(response["roomJoin"]["clients"].ToString()));
+				room.OnLocalClientJoin((int)response["roomJoin"]["code"], response["roomJoin"]["clients"].ToObject<Client[]>(),
+					response["roomJoin"]["quiz"].ToObject<Quiz>());
 				Transition.Instance.StartAnimation(() =>
 				{
+					LobbyForm.GetComponent<LobbyForm>().activeForm.SetActive(false);
 					LobbyForm.SetActive(false);
 					RoomForm.SetActive(true);
 				});
 				break;
 			case "clientJoin":
-				room.OnClientJoin(JsonConvert.DeserializeObject<Client>(response["clientJoin"].ToString()));
+				room.OnClientJoin(response["clientJoin"].ToObject<Client>());
 				break;
 			case "clientLeave":
-				room.OnClientLeave(JsonConvert.DeserializeObject<Client>(response["clientLeave"].ToString()));
+				room.OnClientLeave(room.Clients[(int)response["clientLeave"]]);
 				break;
 			case "gameStarted":
 				game.OnGameStart((string)response["gameStarted"]["name"]);
@@ -82,31 +127,33 @@ public class LocalClient : ClientSocket
 				game.OnTimerStart();
 				break;
 			case "roundStarted":
-				game.CountdownForRoundStart(JsonConvert.DeserializeObject<QuizQuestion>(response["roundStarted"].ToString()));
+				game.CountdownForRoundStart(response["roundStarted"].ToObject<QuizQuestion>());
 				break;
 			case "rightAnswer":
 				game.OnRightAnswer((int)response["rightAnswer"]);
 				break;
 			case "roundEnded":
-				game.OnRoundEnded(JsonConvert.DeserializeObject<Dictionary<int, int>>(response["roundEnded"].ToString()));
+				game.OnRoundEnded(response["roundEnded"].ToObject<Dictionary<int, int>>());
 				break;
 			case "gameEnded":
 				game.OnGameEnded();
 				break;
+			case "join":
+				switch ((string)response["join"]["error"])
+				{
+					case "doesntExistsErr":
+						Infobox.instance.ShowInfo("Комната не существует.", InfoType.red);
+						break;
+					case "startedErr":
+						Infobox.instance.ShowInfo("Игра в этой комнате уже началась.", InfoType.red);
+						break;
+				}
+				break;
 		}
 	}
 
-	public static void Send(string key, string value)
+	public static void Send(string key, JToken? value = null)
 	{
-		JObject request = new JObject();
-		request[key] = value;
-		SendRequest(request.ToString(Formatting.None));
-	}
-
-	public static void Send(string key, int value)
-	{
-		JObject request = new JObject();
-		request[key] = value;
-		SendRequest(request.ToString(Formatting.None));
+		SendRequest(JsonConvert.SerializeObject(new JObject { { key, value } }, Formatting.None));
 	}
 }

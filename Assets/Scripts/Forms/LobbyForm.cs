@@ -91,19 +91,6 @@ public class LobbyForm : MonoBehaviour
 		LocalClient.Send("join", int.Parse(InputField.text));
 	}
 
-	public void UpdateProfileUI(string nickname, string avatar = null)
-	{
-		nicknameText.text = nickname;
-		if (avatar != null)
-		{
-			Texture2D tex = new Texture2D(2, 2);
-			tex.LoadImage(Convert.FromBase64String(avatar));
-			avatarImage.texture = tex;
-		}
-		else
-			avatarImage.texture = blankAvatarSprite.texture;
-	}
-
 	public void AddQuizzes(Quiz[] quizzes)
 	{
 		this.Quizzes = quizzes;

@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using SFB;
 using System;
+using System.IO;
+using Newtonsoft.Json.Linq;
 
 public class QuizEditorForm : MonoBehaviour
 {
@@ -13,6 +15,8 @@ public class QuizEditorForm : MonoBehaviour
 	public GameObject quizSelectionForm;
 	public GameObject quizObject;
 
+	public LocalClient localClient;
+
 	public Transform quizObjectParent;
 
 	public Text questionsCounterText;
@@ -20,6 +24,7 @@ public class QuizEditorForm : MonoBehaviour
 	public InputField quizDescriptionInputField;
 	public RawImage quizImage;
 	public Sprite blankImageSprite;
+	public Sprite blankQuizSprite;
 
 	public InputField questionTextInputField;
 	public InputField[] questionAnswerInputFields;
@@ -38,7 +43,7 @@ public class QuizEditorForm : MonoBehaviour
 	private bool callBlocker = false;
 
 	public List<Quiz> quizzes = new();
-	public List<QuizQuestion> questions = new List<QuizQuestion>();
+	public List<QuizQuestion> questions = new();
 
 	public void Start()
 	{
@@ -62,14 +67,17 @@ public class QuizEditorForm : MonoBehaviour
 		for (int i = 0; i < quizzes.Count; ++i)
 		{
 			GameObject obj = Instantiate(quizObject, quizObjectParent);
-			if (quizzes[i].image != string.Empty)
+			if (!string.IsNullOrEmpty(quizzes[i].image))
 			{
 				Texture2D texture = new Texture2D(2, 2);
 				texture.LoadImage(Convert.FromBase64String(quizzes[i].image));
 				obj.transform.GetChild(0).GetComponent<RawImage>().texture = texture;
 			}
-			obj.transform.GetChild(1).GetComponent<Text>().text = quizzes[i].name == string.Empty ? "Без названия" : quizzes[i].name;
-			obj.transform.GetChild(2).GetComponent<Text>().text = quizzes[i].description == string.Empty ? "Викторина без описания." : quizzes[i].description;
+			else
+				obj.transform.GetChild(0).GetComponent<RawImage>().texture = blankQuizSprite.texture;
+			obj.transform.GetChild(0).GetComponent<ResizeRawImage>().AdjustSize();
+			obj.transform.GetChild(1).GetComponent<Text>().text =  string.IsNullOrEmpty(quizzes[i].name) ? "Без названия" : quizzes[i].name;
+			obj.transform.GetChild(2).GetComponent<Text>().text = string.IsNullOrEmpty(quizzes[i].description) ? "Викторина без описания." : quizzes[i].description;
 			obj.GetComponent<Button>().onClick.AddListener(delegate { LoadExistingQuiz(obj.transform.GetSiblingIndex()); });
 		}
 	}
@@ -84,6 +92,7 @@ public class QuizEditorForm : MonoBehaviour
 		}
 		else
 			quizImage.texture = blankImageSprite.texture;
+		quizImage.GetComponent<ResizeRawImage>().AdjustSize();
 		
 		quizNameInputField.text = quizName;
 		quizDescriptionInputField.text = quizDescription;
@@ -106,12 +115,20 @@ public class QuizEditorForm : MonoBehaviour
 
 	public void OnCountdownInputField()
 	{
-		questions[selectedQuestionIndex].countdown = int.Parse(countDownToStartInputField.text);
+		int result;
+		if (int.TryParse(countDownToStartInputField.text, out result))
+			questions[selectedQuestionIndex].countdown = result;
+		else
+			questions[selectedQuestionIndex].countdown = 0;
 	}
 
 	public void OnQuestionTimeInputField()
 	{
-		questions[selectedQuestionIndex].time = int.Parse(questionTimeInputField.text);
+		int result;
+		if (int.TryParse(questionTimeInputField.text, out result))
+			questions[selectedQuestionIndex].time = result;
+		else
+			questions[selectedQuestionIndex].time = 0;
 	}
 
 	public void OnQuizImagePressed()
@@ -120,9 +137,13 @@ public class QuizEditorForm : MonoBehaviour
 		if (path.Length > 0)
 		{
 			// TODO: ограничение по размеру файла
-			Texture2D texture = new WWW(new Uri(path[0]).AbsoluteUri).texture;
-			quizImageText = Convert.ToBase64String(texture.EncodeToPNG());
+			byte[] bytes = File.ReadAllBytes(path[0]);
+			quizImageText = Convert.ToBase64String(bytes);
+
+			Texture2D texture = new Texture2D(2, 2);
+			texture.LoadImage(bytes);
 			quizImage.texture = texture;
+			quizImage.GetComponent<ResizeRawImage>().AdjustSize();
 		}
 	}
 
@@ -132,9 +153,14 @@ public class QuizEditorForm : MonoBehaviour
 		if (path.Length > 0)
 		{
 			// TODO: ограничение по размеру файла
-			Texture2D texture = new WWW(new Uri(path[0]).AbsoluteUri).texture;
-			questions[selectedQuestionIndex].image = Convert.ToBase64String(texture.EncodeToPNG());
+			byte[] bytes = File.ReadAllBytes(path[0]);
+			questions[selectedQuestionIndex].image = Convert.ToBase64String(bytes);
+
+			Texture2D texture = new Texture2D(2, 2);
+			texture.LoadImage(bytes);
+			questions[selectedQuestionIndex].icon = texture;
 			questionImage.texture = texture;
+			questionImage.GetComponent<ResizeRawImage>().AdjustSize();
 		}
 	}
 
@@ -217,9 +243,15 @@ public class QuizEditorForm : MonoBehaviour
 	public void SendToModeration()
 	{
 		SaveQuiz();
+		if (!localClient.isAuthorizedBySocial)
+		{
+			Infobox.instance.ShowInfo("Вы не авторизованы.", InfoType.red);
+			return;
+		}
 		if (IsQuizCorrectCheck(quizzes[selectedQuizIndex]))
 		{
 			// TODO: отправить на модерацию, возможно после отправки удалить викторину у клиента?
+			LocalClient.Send("userQuiz", JObject.FromObject(quizzes[selectedQuizIndex]));
 			Infobox.instance.ShowInfo("Викторина отправлена на модерацию.", InfoType.green);
 		}
 	}
@@ -256,6 +288,16 @@ public class QuizEditorForm : MonoBehaviour
 			if (quiz.questions[i].rightAnswerIndex == -1)
 			{
 				Infobox.instance.ShowInfo($"Вопрос #{i + 1}: не указан верный ответ.", InfoType.red);
+				return false;
+			}
+			if (quiz.questions[i].countdown <= 0)
+			{
+				Infobox.instance.ShowInfo($"Вопрос #{i + 1}: неверно указано время отсчета до старта.", InfoType.red);
+				return false;
+			}
+			if (quiz.questions[i].countdown <= 0)
+			{
+				Infobox.instance.ShowInfo($"Вопрос #{i + 1}: неверно указано время на ответ.", InfoType.red);
 				return false;
 			}
 			foreach (var answer in quiz.questions[i].answers)
@@ -324,14 +366,11 @@ public class QuizEditorForm : MonoBehaviour
 		questionTextInputField.text = questions[selectedQuestionIndex].question;
 		questionTimeInputField.text = questions[selectedQuestionIndex].time.ToString();
 		countDownToStartInputField.text = questions[selectedQuestionIndex].countdown.ToString();
-		if (questions[selectedQuestionIndex].image != string.Empty)
-		{
-			Texture2D texture = new Texture2D(2, 2);
-			texture.LoadImage(Convert.FromBase64String(questions[selectedQuestionIndex].image));
-			questionImage.texture = texture;
-		}
+		if (questions[selectedQuestionIndex].icon != null)
+			questionImage.texture = questions[selectedQuestionIndex].icon;
 		else
 			questionImage.texture = blankImageSprite.texture;
+		questionImage.GetComponent<ResizeRawImage>().AdjustSize();
 
 		for (int i = 0; i < questionAnswerInputFields.Length; ++i)
 			questionAnswerInputFields[i].text = questions[selectedQuestionIndex].answers[i];

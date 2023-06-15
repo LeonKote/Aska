@@ -6,16 +6,23 @@ using UnityEngine.UI;
 
 public class SettingsForm : MonoBehaviour
 {
-    public AudioListener listener;
+	public static SettingsForm instance;
+	public SoundController soundController;
 	public Toggle soundToggle;
 	public Dropdown screenModeDropdown;
 	public void Init()
 	{
+		instance = this;
 		if (PlayerPrefs.HasKey("settings_sound"))
 		{
-			bool enabled = Convert.ToBoolean(PlayerPrefs.GetInt("settings_sound"));
-			listener.enabled = enabled;
-			soundToggle.isOn = enabled;
+			bool soundEnabled = Convert.ToBoolean(PlayerPrefs.GetInt("settings_sound"));
+			soundController.SetSound(soundEnabled);
+			soundToggle.isOn = !soundEnabled;
+		}
+		else
+		{
+			soundController.SetSound(true);
+			soundToggle.isOn = true;
 		}
 		if (PlayerPrefs.HasKey("settings_screenmode"))
 		{
@@ -26,8 +33,10 @@ public class SettingsForm : MonoBehaviour
 	}
     public void OnSoundTogglePressed()
 	{
-		listener.enabled = soundToggle.isOn;
-		PlayerPrefs.SetInt("settings_sound", Convert.ToInt32(soundToggle.isOn));
+		soundController.SetSound(!soundToggle.isOn);
+		if (SoundToggleButton.instance != null)
+			SoundToggleButton.instance.SetSprite();
+		PlayerPrefs.SetInt("settings_sound", Convert.ToInt32(!soundToggle.isOn));
 	}
 	public void OnDropdownValueChanged()
 	{

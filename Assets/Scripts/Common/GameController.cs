@@ -6,6 +6,7 @@ public class GameController : MonoBehaviour
 {
 	public SettingsForm settingsForm;
 	public Transition transition;
+	public static GameController instance;
 
 	public void Init()
 	{
@@ -14,10 +15,23 @@ public class GameController : MonoBehaviour
 	}
 	public void Awake()
 	{
+		instance = this;
 		Init();
 	}
+
+	public void Start()
+	{
+		SoundController.instance.PlayMusic("lobby", true);
+	}
+
 	public void Quit()
 	{
+		DiscordController.instance.ClearActivity();
 		Application.Quit();
+	}
+
+	public void OnApplicationQuit()
+	{
+		DiscordController.instance.discord.Dispose();
 	}
 }

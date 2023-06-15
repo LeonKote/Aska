@@ -21,15 +21,23 @@ public class ScoreboardPlayer : MonoBehaviour
 
 	private Text scoreText;
 	private float timeElapsed = 0;
-	private bool isChanging;
+	public bool isChanging;
 
-	// Start is called before the first frame update
+	public int Score
+	{
+		get { return score; }
+		set
+		{
+			prevScore = score;
+			score = value;
+		}
+	}
+
 	void Start()
 	{
 		scoreText = transform.GetChild(2).GetComponent<Text>();
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
 		if (!isChanging) return;
@@ -48,10 +56,8 @@ public class ScoreboardPlayer : MonoBehaviour
 		}
 	}
 
-	public void SetScore(int score, int pos)
+	public void SetPos(int pos)
 	{
-		this.prevScore = this.score;
-		this.score = score;
 		prevVecPos = vecPos;
 		vecPos = startVec + pos * offsetVec;
 		isChanging = true;

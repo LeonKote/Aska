@@ -12,46 +12,57 @@ public class CreateLobbyForm : MonoBehaviour
 	public Transform quizObjectParent;
 	public Sprite blankSprite;
 	public InputField searchInputField;
+	public Dictionary<string, Texture> cachedQuizIcons = new Dictionary<string, Texture>();
 	public void OnFormOpened()
 	{
 		searchInputField.text = string.Empty;
 		InstantiateQuizButtons(lobbyForm.Quizzes);
+		LocalClient.Send("searchQuiz", searchInputField.text);
 	}
+
 	public void OnInputFieldChanged()
 	{
-		string query = searchInputField.text.ToLower();
-		List<Quiz> foundQuizzes = new List<Quiz>();
-		for (int i = 0; i < lobbyForm.Quizzes.Length; ++i)
-		{
-			if (lobbyForm.Quizzes[i].name.ToLower().Contains(query))
-				foundQuizzes.Add(lobbyForm.Quizzes[i]);
-		}
-		InstantiateQuizButtons(foundQuizzes.ToArray());
+		LocalClient.Send("searchQuiz", searchInputField.text);
 	}
+
 	public void InstantiateQuizButtons(Quiz[] quizzes)
 	{
 		for (int i = 0; i < quizObjectParent.childCount; ++i)
 			Destroy(quizObjectParent.GetChild(i).gameObject);
-		for (int i = 0; i < quizzes.Length; ++i)
+		foreach (Quiz quiz in quizzes)
 		{
 			GameObject obj = Instantiate(quizObject, quizObjectParent);
-			if (quizzes[i].image != null)
+
+			if (quiz.image != null)
 			{
-				Texture2D tex = new Texture2D(2, 2);
-				tex.LoadImage(Convert.FromBase64String(quizzes[i].image));
-				obj.transform.GetChild(0).GetComponent<RawImage>().texture = tex;
+				if (cachedQuizIcons.ContainsKey(quiz.id))
+				{
+					obj.transform.GetChild(0).GetComponent<RawImage>().texture = cachedQuizIcons[quiz.id];
+				}
+				else
+				{
+					GameController.instance.StartCoroutine(Utils.LoadImage((Texture t) =>
+					{
+						cachedQuizIcons.Add(quiz.id, t);
+						obj.transform.GetChild(0).GetComponent<RawImage>().texture = t;
+					}, quiz.image));
+				}
 			}
 			else
 				obj.transform.GetChild(0).GetComponent<RawImage>().texture = blankSprite.texture;
+			obj.transform.GetChild(0).GetComponent<ResizeRawImage>().AdjustSize();
+
 			obj.transform.GetChild(1).GetComponent<Text>().text =
-				quizzes[i].name == string.Empty ? "Без названия" : quizzes[i].name;
+				string.IsNullOrEmpty(quiz.name) ? "Без названия" : quiz.name;
 
 			obj.transform.GetChild(2).GetComponent<Text>().text =
-				quizzes[i].description == string.Empty ? "Викторина без описания." : quizzes[i].description;
-			obj.name = quizzes[i].id;
+				string.IsNullOrEmpty(quiz.description) ? "Викторина без описания." : quiz.description;
+
+			obj.name = quiz.id;
 			obj.GetComponent<Button>().onClick.AddListener(delegate { OnQuizPressed(quizObjectParent.GetChild(obj.transform.GetSiblingIndex()).name); });
 		}
 	}
+
 	public void OnQuizPressed(string id)
 	{
 		LocalClient.Send("create", id);
